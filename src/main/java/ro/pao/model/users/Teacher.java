@@ -1,6 +1,12 @@
 package ro.pao.model.users;
 
-import ro.pao.model.materials.abstracts.Material;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.SuperBuilder;
+import ro.pao.model.users.abstracts.User;
 
-public class Teacher extends Material {
+@SuperBuilder
+@Getter
+@Setter
+public class Teacher extends User {
 }
