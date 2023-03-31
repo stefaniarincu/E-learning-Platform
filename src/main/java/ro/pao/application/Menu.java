@@ -279,7 +279,89 @@ public class Menu {
         else {
             System.out.println("\nThe test you wanted to delete was not found!");
         }
+    }
 
+    public void demoOnAllMaterials() {
+/*
+        String intro = "\n\n-----Performing different operations on all kinds of materials-----";
+
+        System.out.println(intro);
+
+        Test test = Test.builder()
+                .id(UUID.randomUUID())
+                .creationTime(LocalDateTime.now())
+                .discipline(Discipline.ENGLISH)
+                .title("Past Tenses")
+                .description("Here is a test that contains exercises with past tenses.")
+                .testType(TestType.EXAM)
+                .build();
+
+        testService.addOnlyOne(test);
+
+        Map<UUID, Test> tests = Stream.of(Test.builder()
+                                .id(UUID.randomUUID())
+                                .creationTime(LocalDateTime.now())
+                                .discipline(Discipline.ENGLISH)
+                                .title("Past tenses")
+                                .description("Here is a funny and simple quiz about past tenses.")
+                                .testType(TestType.QUIZ)
+                                .build(),
+                        Test.builder()
+                                .id(UUID.randomUUID())
+                                .creationTime(LocalDateTime.now())
+                                .discipline(Discipline.INFORMATICS)
+                                .title("Basic coding skills")
+                                .description("This test aims to verify all your knowledge from the past few courses.")
+                                .testType(TestType.EXAM)
+                                .build())
+                .collect(Collectors.toMap(Test::getId, Function.identity()));
+
+        testService.addMany(tests);
+
+        System.out.println("\nFor example: we can print all the tests that belongs to a specified Discipline.");
+
+        System.out.println(Discipline.ENGLISH + ":");
+
+        tests = testService.getMaterialsByDiscipline(Discipline.ENGLISH);
+
+        if(tests.isEmpty()) {
+            System.out.println("     No test here!");
+        }
+        else {
+            tests.forEach((key, value) -> System.out.println("     " + value.getTitle()));
+        }
+
+        System.out.println("\n\nAnother example: we can print all the tests that have a given type.");
+
+        System.out.println(TestType.EXAM + ":");
+
+        tests = testService.getTestsByType(TestType.EXAM);
+
+        if(tests.isEmpty()) {
+            System.out.println("     No tests here!");
+        }
+        else {
+            tests.forEach((key, value) -> System.out.println("     " + value.getTitle()));
+        }
+
+        System.out.println("\n\nAnother example: before deleting a test.");
+        testService.getAllItems().forEach((key, value) -> System.out.println("     " + value.getTitle()));
+
+        Optional<Test> optionalTest = testService.getById(UUID.randomUUID());
+
+        if(optionalTest.isPresent()) {
+
+            testService.removeById(optionalTest.get().getId());
+
+            System.out.println("\nAfter deleting the test: " + test.getTitle() + ".");
+
+            testService.getAllItems().forEach((key, value) -> System.out.println("     " + value.getTitle()));
+        }
+        else {
+            System.out.println("\nThe test you wanted to delete was not found!");
+        }
+
+ */
     }
 /*
     public void intro() {
