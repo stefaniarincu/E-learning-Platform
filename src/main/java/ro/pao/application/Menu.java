@@ -20,6 +20,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -42,6 +43,7 @@ public class Menu {
 
         System.out.println(intro);
 
+
         Document document = Document.builder()
                 .id(UUID.randomUUID())
                 .creationTime(LocalDateTime.now())
@@ -52,6 +54,7 @@ public class Menu {
                 .build();
 
         documentService.addOnlyOne(document);
+
 
         Map<UUID, Document> documents = Stream.of(Document.builder()
                                 .id(UUID.randomUUID())
@@ -73,6 +76,7 @@ public class Menu {
 
         documentService.addMany(documents);
 
+
         System.out.println("\nFor example: we can print every existing document type along with the documents that have that type.");
 
         for(DocumentType documentType: DocumentType.values()) {
@@ -89,7 +93,8 @@ public class Menu {
             }
         }
 
-        System.out.println("\nAnother example: we can print all the documents that belong to a certain discipline.");
+
+        System.out.println("\n\nAnother example: we can print all the documents that belong to a certain discipline.");
 
         documents = documentService.getMaterialsByDiscipline(Discipline.INFORMATICS);
 
@@ -109,6 +114,7 @@ public class Menu {
 
         System.out.println(intro);
 
+
         Video video = Video.builder()
                 .id(UUID.randomUUID())
                 .creationTime(LocalDateTime.now())
@@ -119,6 +125,7 @@ public class Menu {
                 .build();
 
         videoService.addOnlyOne(video);
+
 
         Map<UUID, Video> videos = Stream.of(Video.builder()
                                 .id(UUID.randomUUID())
@@ -140,6 +147,7 @@ public class Menu {
 
         videoService.addMany(videos);
 
+
         System.out.println("\nFor example: we can print all the videos that take less than the time given as parameter.");
 
         System.out.println("Less than 32 minutes:");
@@ -153,7 +161,8 @@ public class Menu {
             videos.forEach((key, value) -> System.out.println("     " + value.getTitle()));
         }
 
-        System.out.println("\nAnother example: we can print all the videos that belong to a certain discipline.");
+
+        System.out.println("\n\nAnother example: we can print all the videos that belong to a certain discipline.");
 
         videos = videoService.getMaterialsByDiscipline(Discipline.CHEMISTRY);
 
@@ -164,6 +173,30 @@ public class Menu {
         }
         else {
             videos.forEach((key, value) -> System.out.println("     " + value.getTitle()));
+        }
+
+
+        System.out.println("\n\nAnother example: before editing a video.");
+
+        videoService.getAllItems().forEach((key, value) -> System.out.println("     " + value.getTitle()));
+
+
+        Optional<Video> optionalVideo = videoService.getById(video.getId());
+
+        if(optionalVideo.isPresent()) {
+
+            Video newVideo = optionalVideo.get();
+
+            newVideo.setTitle("New title cuz I got bored!");
+
+            videoService.modifyById(newVideo.getId(), newVideo);
+
+            System.out.println("\nAfter editing the video: " + video.getTitle() + ".");
+
+            videoService.getAllItems().forEach((key, value) -> System.out.println("     " + value.getTitle()));
+        }
+        else {
+            System.out.println("\nThe video that you wanted to update was not found collection of videos.");
         }
     }
 
@@ -217,7 +250,7 @@ public class Menu {
             tests.forEach((key, value) -> System.out.println("     " + value.getTitle()));
         }
 
-        System.out.println("\nAnother example: we can print all the tests that have a given type.");
+        System.out.println("\n\nAnother example: we can print all the tests that have a given type.");
 
         System.out.println(TestType.EXAM + ":");
 
@@ -229,6 +262,24 @@ public class Menu {
         else {
             tests.forEach((key, value) -> System.out.println("     " + value.getTitle()));
         }
+
+        System.out.println("\n\nAnother example: before deleting a test.");
+        testService.getAllItems().forEach((key, value) -> System.out.println("     " + value.getTitle()));
+
+        Optional<Test> optionalTest = testService.getById(UUID.randomUUID());
+
+        if(optionalTest.isPresent()) {
+
+            testService.removeById(optionalTest.get().getId());
+
+            System.out.println("\nAfter deleting the test: " + test.getTitle() + ".");
+
+            testService.getAllItems().forEach((key, value) -> System.out.println("     " + value.getTitle()));
+        }
+        else {
+            System.out.println("\nThe test you wanted to delete was not found!");
+        }
+
     }
 /*
     public void intro() {

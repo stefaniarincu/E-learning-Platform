@@ -14,9 +14,7 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public Optional<Video> getById(UUID id) {
-        return videoMap.values().stream()
-                .filter(video -> id.equals(video.getId()))
-                .findAny();
+        return Optional.ofNullable(videoMap.get(id));
     }
 
     @Override
@@ -50,14 +48,11 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public void removeById(UUID id) {
-        videoMap = videoMap.entrySet().stream()
-                .filter(video -> !id.equals(video.getKey()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        videoMap.remove(id);
     }
 
     @Override
     public void modifyById(UUID id, Video video) {
-        removeById(id);
         addOnlyOne(video);
     }
 }

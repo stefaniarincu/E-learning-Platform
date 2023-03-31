@@ -19,9 +19,7 @@ public class TestServiceImpl implements TestService {
 
     @Override
     public Optional<Test> getById(UUID id) {
-        return testMap.values().stream()
-                .filter(test -> id.equals(test.getId()))
-                .findAny();
+        return Optional.ofNullable(testMap.get(id));
     }
 
     @Override
@@ -55,14 +53,11 @@ public class TestServiceImpl implements TestService {
 
     @Override
     public void removeById(UUID id) {
-        testMap = testMap.entrySet().stream()
-                .filter(test -> !id.equals(test.getKey()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        testMap.remove(id);
     }
 
     @Override
     public void modifyById(UUID id, Test test) {
-        removeById(id);
         addOnlyOne(test);
     }
 }

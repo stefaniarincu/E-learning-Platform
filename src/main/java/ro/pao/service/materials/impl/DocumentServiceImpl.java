@@ -14,9 +14,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public Optional<Document> getById(UUID id) {
-        return documentMap.values().stream()
-                .filter(document -> id.equals(document.getId()))
-                .findAny();
+        return Optional.ofNullable(documentMap.get(id));
     }
 
     @Override
@@ -50,15 +48,11 @@ public class DocumentServiceImpl implements DocumentService {
 
     @Override
     public void removeById(UUID id) {
-        documentMap = documentMap.entrySet().stream()
-                .filter(document -> !id.equals(document.getKey()))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        documentMap.remove(id);
     }
 
     @Override
     public void modifyById(UUID id, Document document) {
-        removeById(id);
-
         addOnlyOne(document);
     }
 }
