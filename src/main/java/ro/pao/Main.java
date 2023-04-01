@@ -1,7 +1,6 @@
 package ro.pao;
 
 import ro.pao.application.Menu;
-import ro.pao.model.users.abstracts.User;
 
 import java.util.Scanner;
 
@@ -17,6 +16,8 @@ public class Main {
             menu.demoOnVideo();
 
             menu.demoOnTest();
+
+            menu.demoOnAllMaterials();
 
             if ("exit".equals(scanner.next())) {
                 break;

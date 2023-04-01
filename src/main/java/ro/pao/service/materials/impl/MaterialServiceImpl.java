@@ -11,16 +11,27 @@ import java.util.Map;
 import java.util.UUID;
 
 public class MaterialServiceImpl implements MaterialService {
-    /*
-    private static Map<UUID, Material> materialMap = new HashMap<>();
+    private static final Map<UUID, Material> materialMap = new HashMap<>();
+
     @Override
     public Map<UUID, Material> addAllKindOfMaterials() {
-        Map<UUID, Document> docucuments = DocumentServiceImpl.getAllItems();
-        Map<UUID, Video> videos = VideoServiceImpl.getAllItems();
-        Map<UUID, Test> tests = TestServiceImpl.getAllItems();
+        DocumentServiceImpl documentService = new DocumentServiceImpl();
+        Map<UUID, Document> documents = documentService.getAllItems();
+        materialMap.putAll(documents);
+
+        VideoServiceImpl videoService = new VideoServiceImpl();
+        Map<UUID, Video> videos = videoService.getAllItems();
+        materialMap.putAll(videos);
+
+        TestServiceImpl testService = new TestServiceImpl();
+        Map<UUID, Test> tests = testService.getAllItems();
+        materialMap.putAll(tests);
+
+        return materialMap;
     }
 
-
-
-     */
+    @Override
+    public Map<UUID, Material> getAllItems() {
+        return materialMap;
+    }
 }

@@ -8,10 +8,9 @@ import java.util.UUID;
 import java.util.function.Predicate;
 
 public interface MaterialService {
-    /*
+
     Map<UUID, Material> addAllKindOfMaterials();
 
-
-     */
+    Map<UUID, Material> getAllItems();
 
 }

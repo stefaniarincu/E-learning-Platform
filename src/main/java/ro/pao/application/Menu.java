@@ -7,20 +7,19 @@ import ro.pao.model.materials.enums.Discipline;
 import ro.pao.model.materials.enums.DocumentType;
 import ro.pao.model.materials.enums.TestType;
 import ro.pao.service.materials.DocumentService;
+import ro.pao.service.materials.MaterialService;
 import ro.pao.service.materials.TestService;
 import ro.pao.service.materials.VideoService;
 import ro.pao.service.materials.impl.DocumentServiceImpl;
+import ro.pao.service.materials.impl.MaterialServiceImpl;
 import ro.pao.service.materials.impl.TestServiceImpl;
 import ro.pao.service.materials.impl.VideoServiceImpl;
-import ro.pao.service.users.StudentService;
-import ro.pao.service.users.impl.StudentServiceImpl;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -32,6 +31,8 @@ public class Menu {
     private final VideoService videoService = new VideoServiceImpl();
 
     private final TestService testService = new TestServiceImpl();
+
+    private final MaterialService materialService = new MaterialServiceImpl();
 
     public static Menu getInstance() {
         return (INSTANCE == null ? new Menu() : INSTANCE);
@@ -49,7 +50,7 @@ public class Menu {
                 .creationTime(LocalDateTime.now())
                 .discipline(Discipline.MATHEMATICS)
                 .title("Complex Numbers")
-                .description("In this material you will learn new informations about complex numbers and their utility.")
+                .description("In this material you will learn new information about complex numbers and their utility.")
                 .documentType(DocumentType.COURSE)
                 .build();
 
@@ -60,8 +61,8 @@ public class Menu {
                                 .id(UUID.randomUUID())
                                 .creationTime(LocalDateTime.now())
                                 .discipline(Discipline.INFORMATICS)
-                                .title("Recursivity")
-                                .description("In this material you will find some exercises that you have to solve using recursivity.")
+                                .title("Recursion")
+                                .description("In this material you will find some exercises that you have to solve using recursion.")
                                 .documentType(DocumentType.PRACTICE)
                                 .build(),
                 Document.builder()
@@ -69,7 +70,7 @@ public class Menu {
                         .creationTime(LocalDateTime.now())
                         .discipline(Discipline.PHYSICS)
                         .title("Newton's laws")
-                        .description("In this material you will find the enunciations of Newton's laws and their demonstrations.")
+                        .description("In this material you will find the enunciation of Newton's laws and their demonstrations.")
                         .documentType(DocumentType.COURSE)
                         .build())
                 .collect(Collectors.toMap(Document::getId, Function.identity()));
@@ -152,7 +153,7 @@ public class Menu {
 
         System.out.println("Less than 32 minutes:");
 
-        videos = videoService.getVideosByDuration(LocalTime.parse("00:30:00", DateTimeFormatter.ISO_TIME));
+        videos = videoService.getVideosByMaxDuration(LocalTime.parse("00:30:00", DateTimeFormatter.ISO_TIME));
 
         if(videos.isEmpty()) {
             System.out.println("     No videos here!");
@@ -282,135 +283,15 @@ public class Menu {
     }
 
     public void demoOnAllMaterials() {
-/*
-        String intro = "\n\n-----Performing different operations on all kinds of materials-----";
+
+        String intro = "\n\n-----Performing different operations on all kind of materials-----";
 
         System.out.println(intro);
 
-        Test test = Test.builder()
-                .id(UUID.randomUUID())
-                .creationTime(LocalDateTime.now())
-                .discipline(Discipline.ENGLISH)
-                .title("Past Tenses")
-                .description("Here is a test that contains exercises with past tenses.")
-                .testType(TestType.EXAM)
-                .build();
+        materialService.addAllKindOfMaterials();
 
-        testService.addOnlyOne(test);
+        System.out.println("For example: we can iterate through the map of all the materials added on the website.");
 
-        Map<UUID, Test> tests = Stream.of(Test.builder()
-                                .id(UUID.randomUUID())
-                                .creationTime(LocalDateTime.now())
-                                .discipline(Discipline.ENGLISH)
-                                .title("Past tenses")
-                                .description("Here is a funny and simple quiz about past tenses.")
-                                .testType(TestType.QUIZ)
-                                .build(),
-                        Test.builder()
-                                .id(UUID.randomUUID())
-                                .creationTime(LocalDateTime.now())
-                                .discipline(Discipline.INFORMATICS)
-                                .title("Basic coding skills")
-                                .description("This test aims to verify all your knowledge from the past few courses.")
-                                .testType(TestType.EXAM)
-                                .build())
-                .collect(Collectors.toMap(Test::getId, Function.identity()));
-
-        testService.addMany(tests);
-
-        System.out.println("\nFor example: we can print all the tests that belongs to a specified Discipline.");
-
-        System.out.println(Discipline.ENGLISH + ":");
-
-        tests = testService.getMaterialsByDiscipline(Discipline.ENGLISH);
-
-        if(tests.isEmpty()) {
-            System.out.println("     No test here!");
-        }
-        else {
-            tests.forEach((key, value) -> System.out.println("     " + value.getTitle()));
-        }
-
-        System.out.println("\n\nAnother example: we can print all the tests that have a given type.");
-
-        System.out.println(TestType.EXAM + ":");
-
-        tests = testService.getTestsByType(TestType.EXAM);
-
-        if(tests.isEmpty()) {
-            System.out.println("     No tests here!");
-        }
-        else {
-            tests.forEach((key, value) -> System.out.println("     " + value.getTitle()));
-        }
-
-        System.out.println("\n\nAnother example: before deleting a test.");
-        testService.getAllItems().forEach((key, value) -> System.out.println("     " + value.getTitle()));
-
-        Optional<Test> optionalTest = testService.getById(UUID.randomUUID());
-
-        if(optionalTest.isPresent()) {
-
-            testService.removeById(optionalTest.get().getId());
-
-            System.out.println("\nAfter deleting the test: " + test.getTitle() + ".");
-
-            testService.getAllItems().forEach((key, value) -> System.out.println("     " + value.getTitle()));
-        }
-        else {
-            System.out.println("\nThe test you wanted to delete was not found!");
-        }
-
- */
+        materialService.getAllItems().forEach((key, value) -> System.out.println(value.getTitle()));
     }
-/*
-    public void intro() {
-        String intro = """
-                Intro example
-                """;
-
-        System.out.println(intro);
-
-        ExampleClass exampleClass = ExampleClass.builder()
-                .id(UUID.randomUUID())
-                .creationDate(LocalDate.now()) // data de azi
-                .updateDate(LocalDate.now())
-                .deleteDate(LocalDate.now())
-                .build();
-
-        exampleService.addOnlyOne(exampleClass);
-
-        List<ExampleClass> exampleServiceList = List.of(
-                ExampleClass.builder()
-                        .id(UUID.randomUUID())
-                        .creationDate(LocalDate.of(2023, 03, 22))
-                        .updateDate(LocalDate.now())
-                        .build(),
-                ExampleClass.builder()
-                        .id(UUID.randomUUID())
-                        .creationDate(LocalDate.of(2023, 03, 22))
-                        .updateDate(LocalDate.now())
-                        .build()
-        );
-
-        exampleService.addAllFromGivenList(exampleServiceList);
-
-        System.out.println("Inainte de stergere: ");
-        exampleService.getAllFromList()
-                .forEach(elementFromList -> System.out.println(elementFromList));
-
-
-        System.out.println("Dupa modificare: ");
-        exampleClass.setUpdateDate(LocalDate.of(2, 2, 2));
-        exampleService.modificaElementById(exampleClass.getId(), exampleClass);
-        exampleService.getAllFromList()
-                .forEach(elementFromList -> System.out.println(elementFromList));
-
-        System.out.println("Dupa stergere: ");
-        exampleService.removeElementById(exampleClass.getId());
-        exampleService.getAllFromList()
-                .forEach(elementFromList -> System.out.println(elementFromList));
-
-
-    } */
 }

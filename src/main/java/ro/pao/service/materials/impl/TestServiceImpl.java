@@ -1,25 +1,20 @@
 package ro.pao.service.materials.impl;
 
-import ro.pao.model.materials.Document;
 import ro.pao.model.materials.Test;
-import ro.pao.model.materials.Video;
 import ro.pao.model.materials.enums.Discipline;
 import ro.pao.model.materials.enums.TestType;
 import ro.pao.service.materials.TestService;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class TestServiceImpl implements TestService {
-    private static Map<UUID, Test> testMap = new HashMap<>();
+    private static final Map<UUID, Test> testMap = new HashMap<>();
 
     @Override
     public Optional<Test> getById(UUID id) {
-        return Optional.ofNullable(testMap.get(id));
+        return Optional.ofNullable(testMap.getOrDefault(id, null));
     }
 
     @Override
@@ -29,6 +24,10 @@ public class TestServiceImpl implements TestService {
 
     @Override
     public Map<UUID, Test> getTestsByType(TestType testType) {
+        if (testType == null) {
+            return Collections.emptyMap();
+        }
+
         return testMap.values().stream()
                 .filter(test -> testType.equals(test.getTestType()))
                 .collect(Collectors.toMap(Test::getId, Function.identity()));
@@ -36,6 +35,10 @@ public class TestServiceImpl implements TestService {
 
     @Override
     public Map<UUID, Test> getMaterialsByDiscipline(Discipline discipline) {
+        if (discipline == null) {
+            return Collections.emptyMap();
+        }
+
         return testMap.values().stream()
                 .filter(test -> discipline.equals(test.getDiscipline()))
                 .collect(Collectors.toMap(Test::getId, Function.identity()));
@@ -43,21 +46,48 @@ public class TestServiceImpl implements TestService {
 
     @Override
     public void addOnlyOne(Test test) {
-        testMap.put(test.getId(), test);
+        if(test == null) {
+            System.out.println("The test that you wanted to add is invalid!");
+        } else if(testMap.containsKey(test.getId())) {
+            System.out.println("The test: --- " + test.getTitle() + " --- that you wanted to add is already in the map!");
+        } else {
+            testMap.put(test.getId(), test);
+        }
     }
 
     @Override
     public void addMany(Map<UUID, Test> tests) {
-        testMap.putAll(tests);
+        for(UUID id: tests.keySet()) {
+            if(tests.get(id) == null) {
+                System.out.println("The test that you wanted to add is invalid!");
+            } else if(!testMap.containsKey(id)) {
+                testMap.put(id, tests.get(id));
+            } else {
+                System.out.println("The test: --- " + tests.get(id).getTitle() + " --- that you wanted to add is already in the map!");
+            }
+        }
     }
 
     @Override
     public void removeById(UUID id) {
-        testMap.remove(id);
+        Test test = testMap.get(id);
+
+        if(test == null) {
+            System.out.println("The test that you wanted to remove is invalid!");
+        } else {
+            testMap.remove(id);
+        }
     }
 
     @Override
     public void modifyById(UUID id, Test test) {
-        addOnlyOne(test);
+        if (test == null) {
+            System.out.println("The test you wanted to modify is null!");
+        } else if (testMap.containsKey(id)) {
+            removeById(id);
+            addOnlyOne(test);
+        } else {
+            System.out.println("The test: --- " + test.getId() + " --- that you wanted to modify does not exist in the map!");
+        }
     }
 }
