@@ -98,25 +98,33 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Map<UUID, Student> getStudentsWithLowerGrade(Double averageGrade) {
+    public List<Student> getStudentsWithLowerGrade(Double averageGrade) {
         if(averageGrade == null) {
-            return Collections.emptyMap();
+            return Collections.emptyList();
         }
 
-        return studentMap.values().stream()
+        List<Student> students = studentMap.values().stream()
                 .filter(singleStudent -> singleStudent.getAverageGrade() < averageGrade)
-                .collect(Collectors.toMap(Student::getId, Function.identity()));
+                .toList();
+
+        return students.stream()
+                .sorted((s1, s2) -> Double.compare(s2.getAverageGrade(), s1.getAverageGrade()))
+                .toList();
     }
 
     @Override
-    public Map<UUID, Student> getStudentsWithHigherGrade(Double averageGrade) {
+    public List<Student> getStudentsWithHigherGrade(Double averageGrade) {
         if(averageGrade == null) {
-            return Collections.emptyMap();
+            return Collections.emptyList();
         }
 
-        return studentMap.values().stream()
+        List<Student> students = studentMap.values().stream()
                 .filter(singleStudent -> singleStudent.getAverageGrade() > averageGrade)
-                .collect(Collectors.toMap(Student::getId, Function.identity()));
+                .toList();
+
+        return students.stream()
+                .sorted(Comparator.comparingDouble(Student::getAverageGrade))
+                .toList();
     }
 
     @Override

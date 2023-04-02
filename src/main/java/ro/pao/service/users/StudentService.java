@@ -3,10 +3,7 @@ package ro.pao.service.users;
 import ro.pao.model.materials.enums.Discipline;
 import ro.pao.model.users.Student;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public interface StudentService {
     Optional<Student> getById(UUID uuid);
@@ -25,9 +22,9 @@ public interface StudentService {
 
     Map<UUID,Student> getUsersByDiscipline(Discipline discipline);
 
-    Map<UUID,Student> getStudentsWithLowerGrade(Double averageGrade);
+    List<Student> getStudentsWithLowerGrade(Double averageGrade);
 
-    Map<UUID,Student> getStudentsWithHigherGrade(Double averageGrade);
+    List<Student> getStudentsWithHigherGrade(Double averageGrade);
 
     void removeById(UUID id);
 

@@ -342,13 +342,40 @@ public class Menu {
         documentService.getDocumentsByType(DocumentType.COURSE).forEach((key, doc) -> materialList3.add(doc));
 
 
-        TreeMap<Discipline, List<Double>> grades = new TreeMap<>();
+        TreeMap<Discipline, List<Double>> gradesTM0 = new TreeMap<>();
 
-        grades.put(Discipline.ENGLISH, new ArrayList<>(Arrays.asList(9.6, 6.4, 10.0)));
+        gradesTM0.put(Discipline.CHEMISTRY, new ArrayList<>(Arrays.asList(6.0, 7.50)));
 
-        grades.put(Discipline.MATHEMATICS, new ArrayList<>(Arrays.asList(8.6, 6.4)));
+        gradesTM0.put(Discipline.INFORMATICS, new ArrayList<>(Arrays.asList(6.0, 7.50)));
 
-        grades.put(Discipline.CHEMISTRY, new ArrayList<>(Arrays.asList(5.0)));
+        gradesTM0.put(Discipline.MATHEMATICS, new ArrayList<>(Arrays.asList(5.0, 5.0)));
+
+
+        TreeMap<Discipline, List<Double>> gradesTM1 = new TreeMap<>();
+
+        gradesTM1.put(Discipline.ENGLISH, new ArrayList<>(Arrays.asList(9.6, 6.4, 10.0)));
+
+        gradesTM1.put(Discipline.MATHEMATICS, new ArrayList<>(Arrays.asList(8.6, 6.4)));
+
+        gradesTM1.put(Discipline.CHEMISTRY, new ArrayList<>(Arrays.asList(5.0)));
+
+
+        TreeMap<Discipline, List<Double>> gradesTM2 = new TreeMap<>();
+
+        gradesTM2.put(Discipline.PHYSICS, new ArrayList<>(Arrays.asList(10.0, 8.50, 10.0)));
+
+        gradesTM2.put(Discipline.MATHEMATICS, new ArrayList<>(Arrays.asList(8.6, 6.4, 10.0)));
+
+        gradesTM2.put(Discipline.INFORMATICS, new ArrayList<>(Arrays.asList(5.0, 10.0)));
+
+
+        TreeMap<Discipline, List<Double>> gradesTM3 = new TreeMap<>();
+
+        gradesTM3.put(Discipline.CHEMISTRY, new ArrayList<>(Arrays.asList(10.0, 8.50)));
+
+        gradesTM3.put(Discipline.INFORMATICS, new ArrayList<>(Arrays.asList(6.0, 9.50)));
+
+        gradesTM3.put(Discipline.MATHEMATICS, new ArrayList<>(Arrays.asList(5.0, 5.0)));
 
 
         Student student = Student.builder()
@@ -369,7 +396,7 @@ public class Menu {
                                 .email("maria.marinescu@gmail")
                                 .password("ParoLa")
                                 .materials(materialList2)
-                                .grades(grades)
+                                .grades(gradesTM1)
                                 .build(),
                         Student.builder()
                                 .id(UUID.randomUUID())
@@ -378,6 +405,25 @@ public class Menu {
                                 .email("matei.marinescu@gmail")
                                 .password("ParoLA")
                                 .materials(materialList3)
+                                .grades(gradesTM0)
+                                .build(),
+                        Student.builder()
+                                .id(UUID.randomUUID())
+                                .firstName("Clara")
+                                .lastName("Clarescu")
+                                .email("cc@gmail")
+                                .password("PUnCeva")
+                                .materials(materialList2)
+                                .grades(gradesTM2)
+                                .build(),
+                        Student.builder()
+                                .id(UUID.randomUUID())
+                                .firstName("Sara")
+                                .lastName("Pitco")
+                                .email("s.pitco@gmail")
+                                .password("PunAtcV")
+                                .materials(materialList3)
+                                .grades(gradesTM3)
                                 .build())
                 .collect(Collectors.toMap(Student::getId, Function.identity(), (s1, s2) -> s1, LinkedHashMap::new));
 
@@ -415,10 +461,10 @@ public class Menu {
         if (optionalStudent.isPresent()) {
             System.out.println("\nStudents with higher grade than " + optionalStudent.get().getAverageGrade());
 
-            Map<UUID, Student> studentByGrade = studentService.getStudentsWithHigherGrade(optionalStudent.get().getAverageGrade());
+            List<Student> studentByGrade = studentService.getStudentsWithHigherGrade(optionalStudent.get().getAverageGrade());
 
             if (!studentByGrade.isEmpty()) {
-                studentByGrade.forEach((key, std) -> System.out.println("Student: " + std.getFirstName() + " " + std.getLastName() + " -- " + std.getAverageGrade()));
+                studentByGrade.forEach(std -> System.out.println("Student: " + std.getFirstName() + " " + std.getLastName() + " -- " + std.getAverageGrade()));
             } else {
                 System.out.println("There are no students!");
             }
@@ -428,7 +474,7 @@ public class Menu {
             studentByGrade = studentService.getStudentsWithLowerGrade(optionalStudent.get().getAverageGrade());
 
             if (!studentByGrade.isEmpty()) {
-                studentByGrade.forEach((key, std) -> System.out.println("Student: " + std.getFirstName() + " " + std.getLastName() + " -- " + std.getAverageGrade()));
+                studentByGrade.forEach(std -> System.out.println("Student: " + std.getFirstName() + " " + std.getLastName() + " -- " + std.getAverageGrade()));
             } else {
                 System.out.println("There are no students!");
             }
