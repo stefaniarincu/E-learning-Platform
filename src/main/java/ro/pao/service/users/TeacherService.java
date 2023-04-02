@@ -1,18 +1,27 @@
 package ro.pao.service.users;
 
-import ro.pao.model.materials.abstracts.Material;
 import ro.pao.model.materials.enums.Discipline;
 import ro.pao.model.users.Teacher;
-import ro.pao.model.users.abstracts.User;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public interface TeacherService {
+
     Optional<Teacher> getById(UUID uuid);
 
-    List<Teacher> getUsersByCourse(Material material);
+    Optional<Teacher> getByEmail(String email);
 
-    List<Teacher> getUsersByDiscipline(Discipline discipline);
+    boolean emailExists(Teacher teacher);
+
+    void addOnlyOne(Teacher teacher);
+
+    void addMany(LinkedHashMap<UUID, Teacher> teachers);
+
+    LinkedHashMap<UUID, Teacher> getAllItems();
+
+    Map<UUID, Teacher> getUsersByDiscipline(Discipline discipline);
+
+    void removeById(UUID id);
+
+    void modifyById(UUID id, Teacher teacher);
 }

@@ -3,9 +3,12 @@ package ro.pao.application;
 import ro.pao.model.materials.Document;
 import ro.pao.model.materials.Test;
 import ro.pao.model.materials.Video;
+import ro.pao.model.materials.abstracts.Material;
 import ro.pao.model.materials.enums.Discipline;
 import ro.pao.model.materials.enums.DocumentType;
 import ro.pao.model.materials.enums.TestType;
+import ro.pao.model.users.Student;
+import ro.pao.model.users.Teacher;
 import ro.pao.service.materials.DocumentService;
 import ro.pao.service.materials.MaterialService;
 import ro.pao.service.materials.TestService;
@@ -14,6 +17,12 @@ import ro.pao.service.materials.impl.DocumentServiceImpl;
 import ro.pao.service.materials.impl.MaterialServiceImpl;
 import ro.pao.service.materials.impl.TestServiceImpl;
 import ro.pao.service.materials.impl.VideoServiceImpl;
+import ro.pao.service.users.StudentService;
+import ro.pao.service.users.TeacherService;
+import ro.pao.service.users.UserService;
+import ro.pao.service.users.impl.StudentServiceImpl;
+import ro.pao.service.users.impl.TeacherServiceImpl;
+import ro.pao.service.users.impl.UserServiceImpl;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -33,6 +42,12 @@ public class Menu {
     private final TestService testService = new TestServiceImpl();
 
     private final MaterialService materialService = new MaterialServiceImpl();
+
+    private final StudentService studentService = new StudentServiceImpl();
+
+    private final TeacherService teacherService = new TeacherServiceImpl();
+
+    private final UserService userService = new UserServiceImpl();
 
     public static Menu getInstance() {
         return (INSTANCE == null ? new Menu() : INSTANCE);
@@ -293,5 +308,222 @@ public class Menu {
         System.out.println("For example: we can iterate through the map of all the materials added on the website.");
 
         materialService.getAllItems().forEach((key, value) -> System.out.println(value.getTitle()));
+    }
+
+    public void demoOnStudents() {
+
+        String intro = "\n\n-----Performing different operations on a Student object-----";
+
+        System.out.println(intro);
+
+
+        List<Material> materialList1 = new ArrayList<>();
+
+        videoService.getMaterialsByDiscipline(Discipline.MATHEMATICS).forEach((key, video) -> materialList1.add(video));
+
+        testService.getTestsByType(TestType.EXAM).forEach((key, test) -> materialList1.add(test));
+
+        documentService.getMaterialsByDiscipline(Discipline.INFORMATICS).forEach((key, doc) -> materialList1.add(doc));
+
+
+        List<Material> materialList2 = new ArrayList<>();
+
+        videoService.getMaterialsByDiscipline(Discipline.CHEMISTRY).forEach((key, video) -> materialList2.add(video));
+
+        testService.getTestsByType(TestType.QUIZ).forEach((key, test) -> materialList2.add(test));
+
+        documentService.getDocumentsByType(DocumentType.COURSE).forEach((key, doc) -> materialList2.add(doc));
+
+
+        List<Material> materialList3 = new ArrayList<>();
+
+        videoService.getMaterialsByDiscipline(Discipline.CHEMISTRY).forEach((key, video) -> materialList3.add(video));
+
+        documentService.getDocumentsByType(DocumentType.COURSE).forEach((key, doc) -> materialList3.add(doc));
+
+
+        TreeMap<Discipline, List<Double>> grades = new TreeMap<>();
+
+        grades.put(Discipline.ENGLISH, new ArrayList<>(Arrays.asList(9.6, 6.4, 10.0)));
+
+        grades.put(Discipline.MATHEMATICS, new ArrayList<>(Arrays.asList(8.6, 6.4)));
+
+        grades.put(Discipline.CHEMISTRY, new ArrayList<>(Arrays.asList(5.0)));
+
+
+        Student student = Student.builder()
+                .id(UUID.randomUUID())
+                .firstName("Ion")
+                .lastName("Ionescu")
+                .email("ion.ionescu@gmail")
+                .password("WhiejaW")
+                .materials(materialList1)
+                .build();
+
+        studentService.addOnlyOne(student);
+
+        LinkedHashMap<UUID, Student> students = Stream.of(Student.builder()
+                                .id(UUID.randomUUID())
+                                .firstName("Maria")
+                                .lastName("Marinescu")
+                                .email("maria.marinescu@gmail")
+                                .password("ParoLa")
+                                .materials(materialList2)
+                                .grades(grades)
+                                .build(),
+                        Student.builder()
+                                .id(UUID.randomUUID())
+                                .firstName("Matei")
+                                .lastName("Marinescu")
+                                .email("matei.marinescu@gmail")
+                                .password("ParoLA")
+                                .materials(materialList3)
+                                .build())
+                .collect(Collectors.toMap(Student::getId, Function.identity(), (s1, s2) -> s1, LinkedHashMap::new));
+
+        studentService.addMany(students);
+
+
+        System.out.println("\nFor example: we can try to add a new teacher.\n  Before trying to add:");
+
+        studentService.getAllItems().forEach((key, std) -> System.out.println("Student: " + std.getFirstName() + " " + std.getLastName()));
+
+        studentService.addOnlyOne(student);
+
+        System.out.println("\n  After trying to add:");
+
+        studentService.getAllItems().forEach((key, std) -> System.out.println("Student: " + std.getFirstName() + " " + std.getLastName()));
+
+
+        System.out.println("\nAnother example: we can display all the students that used a resource from a specified discipline.");
+
+        Map<UUID, Student> studentByDiscipline = studentService.getUsersByDiscipline(Discipline.MATHEMATICS);
+
+        System.out.println("\n  For discipline: " + Discipline.MATHEMATICS);
+
+        if (studentByDiscipline != null) {
+            studentByDiscipline.forEach((key, std) -> System.out.println("Student: " + std.getFirstName() + " " + std.getLastName()));
+        } else {
+            System.out.println("There are no students!");
+        }
+
+
+        System.out.println("\nAnother example: we can get all the students that have a lower or a higher grade than a specified student.");
+
+        Optional<Student> optionalStudent = studentService.getByEmail("maria.marinescu@gmail");
+
+        if (optionalStudent.isPresent()) {
+            System.out.println("\nStudents with higher grade than " + optionalStudent.get().getAverageGrade());
+
+            Map<UUID, Student> studentByGrade = studentService.getStudentsWithHigherGrade(optionalStudent.get().getAverageGrade());
+
+            if (!studentByGrade.isEmpty()) {
+                studentByGrade.forEach((key, std) -> System.out.println("Student: " + std.getFirstName() + " " + std.getLastName() + " -- " + std.getAverageGrade()));
+            } else {
+                System.out.println("There are no students!");
+            }
+
+            System.out.println("\nStudents with lower grade than " + optionalStudent.get().getAverageGrade());
+
+            studentByGrade = studentService.getStudentsWithLowerGrade(optionalStudent.get().getAverageGrade());
+
+            if (!studentByGrade.isEmpty()) {
+                studentByGrade.forEach((key, std) -> System.out.println("Student: " + std.getFirstName() + " " + std.getLastName() + " -- " + std.getAverageGrade()));
+            } else {
+                System.out.println("There are no students!");
+            }
+        }
+    }
+
+    public void demoOnTeachers() {
+
+        String intro = "\n\n-----Performing different operations on a Teacher object-----";
+
+        System.out.println(intro);
+
+
+        List<Discipline> teachCourses1 = List.of(Discipline.MATHEMATICS, Discipline.INFORMATICS, Discipline.PHYSICS);
+
+        List<Discipline> teachCourses2 = List.of(Discipline.CHEMISTRY, Discipline.PHYSICS);
+
+        List<Discipline> teachCourses3 = List.of(Discipline.ENGLISH);
+
+
+        Teacher teacher = Teacher.builder()
+                .id(UUID.randomUUID())
+                .firstName("Radu")
+                .lastName("Popescu")
+                .email("radu.pop@gmail")
+                .password("WhIejaW")
+                .teachCourses(teachCourses1)
+                .build();
+
+        teacherService.addOnlyOne(teacher);
+
+        LinkedHashMap<UUID, Teacher> teachers = Stream.of(Teacher.builder()
+                                .id(UUID.randomUUID())
+                                .firstName("Elena")
+                                .lastName("Enescu")
+                                .email("ella.enescu@gmail")
+                                .password("PaRoLa")
+                                .teachCourses(teachCourses2)
+                                .build(),
+                        Teacher.builder()
+                                .id(UUID.randomUUID())
+                                .firstName("Alin")
+                                .lastName("Alina")
+                                .email("alin.al@gmail")
+                                .password("PARoLA")
+                                .teachCourses(teachCourses3)
+                                .build())
+                .collect(Collectors.toMap(Teacher::getId, Function.identity(), (s1, s2) -> s1, LinkedHashMap::new));
+
+        teacherService.addMany(teachers);
+
+
+        System.out.println("\nFor example: we can try to add a new teacher.\n  Before trying to add:");
+
+        teacherService.getAllItems().forEach((key, tch) -> System.out.println("Teacher: " + tch.getFirstName() + " " + tch.getLastName()));
+
+        List<Discipline> teachCourses4 = List.of(Discipline.ENGLISH, Discipline.INFORMATICS);
+
+        teacherService.addOnlyOne(Teacher.builder()
+                .id(UUID.randomUUID())
+                .firstName("Carmen")
+                .lastName("Ceva")
+                .email("carmen.ceva@gmail")
+                .password("HAshSet")
+                .teachCourses(teachCourses4)
+                .build());
+
+        System.out.println("\n  After trying to add:");
+
+        teacherService.getAllItems().forEach((key, tch) -> System.out.println("Teacher: " + tch.getFirstName() + " " + tch.getLastName()));
+
+
+        System.out.println("\nAnother example: we can display all the teachers that teach a specified discipline.");
+
+        Map<UUID, Teacher> teacherByDiscipline = teacherService.getUsersByDiscipline(Discipline.MATHEMATICS);
+
+        System.out.println("\n  For discipline: " + Discipline.MATHEMATICS);
+
+        if (teacherByDiscipline != null) {
+            teacherByDiscipline.forEach((key, tch) -> System.out.println("Teacher: " + tch.getFirstName() + " " + tch.getLastName()));
+        } else {
+            System.out.println("There are no teachers!");
+        }
+    }
+
+    public void demoOnAllUsers() {
+
+        String intro = "\n\n-----Performing different operations on all kind of users-----";
+
+        System.out.println(intro);
+
+        userService.addAllKindOfUsers();
+
+        System.out.println("For example: we can iterate through the map of all the users that have an account on the website.");
+
+        userService.getAllItems().forEach((key, user) -> System.out.println("User: " + user.getFirstName() + " " + user.getLastName()));
     }
 }

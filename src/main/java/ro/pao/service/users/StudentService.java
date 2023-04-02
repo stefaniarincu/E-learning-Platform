@@ -1,6 +1,5 @@
 package ro.pao.service.users;
 
-import ro.pao.model.materials.abstracts.Material;
 import ro.pao.model.materials.enums.Discipline;
 import ro.pao.model.users.Student;
 
@@ -20,11 +19,17 @@ public interface StudentService {
 
     void addMany(LinkedHashMap<UUID, Student> students);
 
-    Map<UUID, Student> getUsersByCourse(Material material);
+    LinkedHashMap<UUID, Student> getAllItems();
+
+    Map<UUID, Student> getUsersByMaterialId(UUID materialId);
 
     Map<UUID,Student> getUsersByDiscipline(Discipline discipline);
 
     Map<UUID,Student> getStudentsWithLowerGrade(Double averageGrade);
 
     Map<UUID,Student> getStudentsWithHigherGrade(Double averageGrade);
+
+    void removeById(UUID id);
+
+    void modifyById(UUID id, Student student);
 }

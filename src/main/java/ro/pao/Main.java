@@ -19,6 +19,12 @@ public class Main {
 
             menu.demoOnAllMaterials();
 
+            menu.demoOnStudents();
+
+            menu.demoOnTeachers();
+
+            menu.demoOnAllUsers();
+
             if ("exit".equals(scanner.next())) {
                 break;
             }
