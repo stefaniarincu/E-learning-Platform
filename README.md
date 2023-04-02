@@ -17,6 +17,7 @@ On this platform, the teachers are supposed to upload materials for the students
 &emsp;&emsp;&emsp;-> **Document** (extends Material --> adds DocumentType documentType) <br />
 &emsp;&emsp;&emsp;-> **Video** (extends Material --> adds LocalTime duration) <br />
 &emsp;&emsp;&emsp;-> **Test** (extends Material --> adds TestType testType, Double score) <br />
+&emsp;&emsp;&emsp;-> **Statistic** (record that stores some statistics about the tests) <br />
 <br />
 ### Services <br />
 &emsp;&emsp;&emsp;-> **UserService** and **UserServiceImpl** <br />
@@ -27,4 +28,21 @@ On this platform, the teachers are supposed to upload materials for the students
 &emsp;&emsp;&emsp;-> **TestService** and **TestServiceImpl** <br />
 &emsp;&emsp;&emsp;-> **VideoService** and **VideoServiceImpl** <br />
 <br />
+### Functionalities <br />
+&emsp;&emsp;&emsp;-> We can add/remove/update a user (both student or teacher) <br />
+&emsp;&emsp;&emsp;-> We can add/remove/update a material (both document, test or video) <br />
+&emsp;&emsp;&emsp;-> We can get all the documents that belongs to a certain discipline <br />
+&emsp;&emsp;&emsp;-> We can get all the documents that belongs to a certain type of document<br />
+&emsp;&emsp;&emsp;-> We can get all the videos that belongs to a certain discipline <br />
+&emsp;&emsp;&emsp;-> We can get all the videos that have a duration lesser than a given time <br />
+&emsp;&emsp;&emsp;-> We can get all the tests that belongs to a certain discipline <br />  
+&emsp;&emsp;&emsp;-> We can get all the tests that belongs to a certain type of test <br />
+&emsp;&emsp;&emsp;-> We can get all the students that have materials form a certain discipline <br />
+&emsp;&emsp;&emsp;-> We can get all the students that have an average grade higher or lower than a specified grade sorted by a different criteria<br />  
+&emsp;&emsp;&emsp;-> We can get all the teachers that uploaded materials from a given discipline <br />
+&emsp;&emsp;&emsp;-> We can get all the users in the app sorted by their names <br /> 
+&emsp;&emsp;&emsp;-> We can get a list of all the users in the app or all the materials inserted <br />
+  
+  
+
 
