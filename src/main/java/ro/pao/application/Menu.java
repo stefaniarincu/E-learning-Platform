@@ -7,6 +7,7 @@ import ro.pao.model.materials.abstracts.Material;
 import ro.pao.model.materials.enums.Discipline;
 import ro.pao.model.materials.enums.DocumentType;
 import ro.pao.model.materials.enums.TestType;
+import ro.pao.model.materials.records.Statistic;
 import ro.pao.model.users.Student;
 import ro.pao.model.users.Teacher;
 import ro.pao.service.materials.DocumentService;
@@ -236,7 +237,7 @@ public class Menu {
 
         Map<UUID, Test> tests = Stream.of(Test.builder()
                                 .id(UUID.randomUUID())
-                                .creationTime(LocalDateTime.now().minus(66, ChronoUnit.HOURS))
+                                .creationTime(LocalDateTime.now().minus(66, ChronoUnit.DAYS))
                                 .discipline(Discipline.ENGLISH)
                                 .title("Past tenses")
                                 .description("Here is a funny and simple quiz about past tenses.")
@@ -296,6 +297,11 @@ public class Menu {
         else {
             System.out.println("\nThe test you wanted to delete was not found!");
         }
+
+        System.out.println("\nAnother example is that we can add statistic to a given test.");
+
+        Statistic statistic = new Statistic(test, "Difficult", 33.33);
+        System.out.println("    " + statistic);
     }
 
     public void demoOnAllMaterials() {
