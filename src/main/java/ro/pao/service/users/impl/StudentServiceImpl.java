@@ -45,6 +45,8 @@ public class StudentServiceImpl implements StudentService {
         if (!emailExists(student)) {
             student.setAverageGrade(student.calculateAverageGrade());
 
+            Collections.sort(student.getMaterials());
+
             studentMap.put(student.getId(), student);
             studentEmailMap.put(student.getEmail(), student);
         } else {
@@ -59,6 +61,8 @@ public class StudentServiceImpl implements StudentService {
 
             if (!emailExists(student)) {
                 student.setAverageGrade(student.calculateAverageGrade());
+
+                Collections.sort(student.getMaterials());
 
                 studentMap.put(entry.getKey(), student);
                 studentEmailMap.put(student.getEmail(), student);

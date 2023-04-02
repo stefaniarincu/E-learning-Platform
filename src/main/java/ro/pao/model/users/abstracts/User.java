@@ -5,9 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import ro.pao.model.materials.abstracts.Material;
 
-import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -21,4 +19,9 @@ public abstract class User {
     private String lastName;
     private String email;
     private String password;
+
+    @Override
+    public String toString() {
+        return this.firstName + " " + this.lastName + " with the email: " + this.email;
+    }
 }

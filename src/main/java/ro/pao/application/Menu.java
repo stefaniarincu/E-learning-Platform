@@ -27,6 +27,7 @@ import ro.pao.service.users.impl.UserServiceImpl;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -62,7 +63,7 @@ public class Menu {
 
         Document document = Document.builder()
                 .id(UUID.randomUUID())
-                .creationTime(LocalDateTime.now())
+                .creationTime(LocalDateTime.now().minus(31, ChronoUnit.DAYS))
                 .discipline(Discipline.MATHEMATICS)
                 .title("Complex Numbers")
                 .description("In this material you will learn new information about complex numbers and their utility.")
@@ -74,7 +75,7 @@ public class Menu {
 
         Map<UUID, Document> documents = Stream.of(Document.builder()
                                 .id(UUID.randomUUID())
-                                .creationTime(LocalDateTime.now())
+                                .creationTime(LocalDateTime.now().minus(1, ChronoUnit.MONTHS))
                                 .discipline(Discipline.INFORMATICS)
                                 .title("Recursion")
                                 .description("In this material you will find some exercises that you have to solve using recursion.")
@@ -82,7 +83,7 @@ public class Menu {
                                 .build(),
                 Document.builder()
                         .id(UUID.randomUUID())
-                        .creationTime(LocalDateTime.now())
+                        .creationTime(LocalDateTime.now().minus(891263, ChronoUnit.MINUTES))
                         .discipline(Discipline.PHYSICS)
                         .title("Newton's laws")
                         .description("In this material you will find the enunciation of Newton's laws and their demonstrations.")
@@ -133,7 +134,7 @@ public class Menu {
 
         Video video = Video.builder()
                 .id(UUID.randomUUID())
-                .creationTime(LocalDateTime.now())
+                .creationTime(LocalDateTime.now().minus(1, ChronoUnit.YEARS))
                 .discipline(Discipline.CHEMISTRY)
                 .title("Visualization of atoms")
                 .description("This is a video where you can find a short visualization atoms.")
@@ -145,7 +146,7 @@ public class Menu {
 
         Map<UUID, Video> videos = Stream.of(Video.builder()
                                 .id(UUID.randomUUID())
-                                .creationTime(LocalDateTime.now())
+                                .creationTime(LocalDateTime.now().minus(121, ChronoUnit.HOURS))
                                 .discipline(Discipline.PHYSICS)
                                 .title("Natural phenomena")
                                 .description("In this video you will find a video which explains how some of the natural phenomena appears.")
@@ -224,7 +225,7 @@ public class Menu {
 
         Test test = Test.builder()
                 .id(UUID.randomUUID())
-                .creationTime(LocalDateTime.now())
+                .creationTime(LocalDateTime.now().minus(12312, ChronoUnit.HALF_DAYS))
                 .discipline(Discipline.ENGLISH)
                 .title("Past Tenses")
                 .description("Here is a test that contains exercises with past tenses.")
@@ -235,7 +236,7 @@ public class Menu {
 
         Map<UUID, Test> tests = Stream.of(Test.builder()
                                 .id(UUID.randomUUID())
-                                .creationTime(LocalDateTime.now())
+                                .creationTime(LocalDateTime.now().minus(66, ChronoUnit.HOURS))
                                 .discipline(Discipline.ENGLISH)
                                 .title("Past tenses")
                                 .description("Here is a funny and simple quiz about past tenses.")
@@ -430,7 +431,7 @@ public class Menu {
         studentService.addMany(students);
 
 
-        System.out.println("\nFor example: we can try to add a new teacher.\n  Before trying to add:");
+        System.out.println("\nFor example: we can try to add a new student.\n  Before trying to add:");
 
         studentService.getAllItems().forEach((key, std) -> System.out.println("Student: " + std.getFirstName() + " " + std.getLastName()));
 
@@ -448,7 +449,7 @@ public class Menu {
         System.out.println("\n  For discipline: " + Discipline.MATHEMATICS);
 
         if (studentByDiscipline != null) {
-            studentByDiscipline.forEach((key, std) -> System.out.println("Student: " + std.getFirstName() + " " + std.getLastName()));
+            studentByDiscipline.forEach((key, std) -> System.out.println(std));
         } else {
             System.out.println("There are no students!");
         }
