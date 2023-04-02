@@ -6,7 +6,7 @@ On this platform, the teachers are supposed to upload materials for the students
 
 ## Structure <br />
 
-###Classes
+### Classes <br />
 &emsp;&emsp;&emsp;-> **Discipline** (Enum) <br />
 &emsp;&emsp;&emsp;-> **User** (Abstract class) <br />
 &emsp;&emsp;&emsp;-> **Student** (extends User --> adds List<Material> materials, TreeMap<Discipline, List<Double>> grades, Double averageGrade;) <br />
@@ -18,13 +18,13 @@ On this platform, the teachers are supposed to upload materials for the students
 &emsp;&emsp;&emsp;-> **Video** (extends Material --> adds LocalTime duration) <br />
 &emsp;&emsp;&emsp;-> **Test** (extends Material --> adds TestType testType, Double score) <br />
 <br />
-###Services
-&emsp;&emsp;&emsp;-> **UserService** && **UserServiceImpl" <br />
-&emsp;&emsp;&emsp;-> **StudentService** && **StudentServiceImpl" <br />
-&emsp;&emsp;&emsp;-> **TeacherService** && **TeacherServiceImpl" <br />
-&emsp;&emsp;&emsp;-> **MaterialService** && **MaterialServiceImpl" <br />
-&emsp;&emsp;&emsp;-> **DocumentService** && **DocumentServiceImpl" <br />
-&emsp;&emsp;&emsp;-> **TestService** && **TestServiceImpl" <br />
-&emsp;&emsp;&emsp;-> **VideoService** && **VideoServiceImpl" <br />
+### Services <br />
+&emsp;&emsp;&emsp;-> **UserService** and **UserServiceImpl** <br />
+&emsp;&emsp;&emsp;-> **StudentService** and **StudentServiceImpl** <br />
+&emsp;&emsp;&emsp;-> **TeacherService** and **TeacherServiceImpl** <br />
+&emsp;&emsp;&emsp;-> **MaterialService** and **MaterialServiceImpl** <br />
+&emsp;&emsp;&emsp;-> **DocumentService** and **DocumentServiceImpl** <br />
+&emsp;&emsp;&emsp;-> **TestService** and **TestServiceImpl** <br />
+&emsp;&emsp;&emsp;-> **VideoService** and **VideoServiceImpl** <br />
 <br />
 
