@@ -1,10 +1,8 @@
 package ro.pao.service;
 
 import org.junit.jupiter.api.Test;
-import ro.pao.application.Menu;
-import ro.pao.model.materials.Document;
-import ro.pao.service.materials.DocumentService;
-import ro.pao.service.materials.impl.DocumentServiceImpl;
+import ro.pao.model.Document;
+import ro.pao.service.impl.DocumentServiceImpl;
 
 import java.util.UUID;
 
@@ -12,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DocumentServiceTest {
 
-    private final Menu menu = Menu.getInstance();
+    //private final Menu menu = Menu.getInstance();
     private final DocumentService documentService = new DocumentServiceImpl();
 
     @Test

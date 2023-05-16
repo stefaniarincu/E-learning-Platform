@@ -1,42 +1,8 @@
 package ro.pao.application;
 
-import ro.pao.model.materials.Document;
-import ro.pao.model.materials.Test;
-import ro.pao.model.materials.Video;
-import ro.pao.model.materials.abstracts.Material;
-import ro.pao.model.materials.enums.Discipline;
-import ro.pao.model.materials.enums.DocumentType;
-import ro.pao.model.materials.enums.TestType;
-import ro.pao.model.materials.records.Statistic;
-import ro.pao.model.users.Student;
-import ro.pao.model.users.Teacher;
-import ro.pao.service.materials.DocumentService;
-import ro.pao.service.materials.MaterialService;
-import ro.pao.service.materials.TestService;
-import ro.pao.service.materials.VideoService;
-import ro.pao.service.materials.impl.DocumentServiceImpl;
-import ro.pao.service.materials.impl.MaterialServiceImpl;
-import ro.pao.service.materials.impl.TestServiceImpl;
-import ro.pao.service.materials.impl.VideoServiceImpl;
-import ro.pao.service.users.StudentService;
-import ro.pao.service.users.TeacherService;
-import ro.pao.service.users.UserService;
-import ro.pao.service.users.impl.StudentServiceImpl;
-import ro.pao.service.users.impl.TeacherServiceImpl;
-import ro.pao.service.users.impl.UserServiceImpl;
-
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 public class Menu {
     private static Menu INSTANCE;
-
+/*
     private final DocumentService documentService = new DocumentServiceImpl();
 
     private final VideoService videoService = new VideoServiceImpl();
@@ -578,5 +544,5 @@ public class Menu {
         System.out.println("For example: we can iterate through the map of all the users that have an account on the website.");
 
         userService.getAllItems().forEach((key, user) -> System.out.println("User: " + user.getFirstName() + " " + user.getLastName()));
-    }
+    }*/
 }
