@@ -34,11 +34,21 @@ public class UserMapper {
         }
     }
 
+    public Student mapToStudentWithoutNext(ResultSet resultSet) throws SQLException {
+        return new Student().toBuilder()
+                .id(UUID.fromString(resultSet.getString("user_id")))
+                .firstName(resultSet.getString("first_name"))
+                .lastName(resultSet.getString("last_name"))
+                .email(resultSet.getString("email"))
+                .password(resultSet.getString("password"))
+                .build();
+    }
+
     public List<Student> mapToStudentList(ResultSet resultSet) throws SQLException {
         List<Student> studentList = new ArrayList<>();
 
         while (resultSet.next()) {
-            studentList.add(mapToStudent(resultSet));
+            studentList.add(mapToStudentWithoutNext(resultSet));
         }
 
         return studentList;
@@ -58,11 +68,21 @@ public class UserMapper {
         }
     }
 
+    public Teacher mapToTeacherWithoutNext(ResultSet resultSet) throws SQLException {
+        return new Teacher().toBuilder()
+                .id(UUID.fromString(resultSet.getString("user_id")))
+                .firstName(resultSet.getString("first_name"))
+                .lastName(resultSet.getString("last_name"))
+                .email(resultSet.getString("email"))
+                .password(resultSet.getString("password"))
+                .build();
+    }
+
     public List<Teacher> mapToTeacherList(ResultSet resultSet) throws SQLException {
         List<Teacher> teacherList = new ArrayList<>();
 
         while (resultSet.next()) {
-            teacherList.add(mapToTeacher(resultSet));
+            teacherList.add(mapToTeacherWithoutNext(resultSet));
         }
 
         return teacherList;
@@ -79,14 +99,20 @@ public class UserMapper {
         }
     }
 
+    public User mapToUserWithoutNext(ResultSet resultSet) throws SQLException {
+        if (resultSet.getString("user_type").equalsIgnoreCase("student"))
+            return mapToStudentWithoutNext(resultSet);
+        return mapToTeacherWithoutNext(resultSet);
+    }
+
     public List<User> mapToUserList(ResultSet resultSet) throws SQLException {
         List<User> userList = new ArrayList<>();
 
         while (resultSet.next()){
             if (resultSet.getString("user_type").equalsIgnoreCase("student"))
-                userList.add(mapToStudent(resultSet));
+                userList.add(mapToStudentWithoutNext(resultSet));
             else
-                userList.add(mapToTeacher(resultSet));
+            userList.add(mapToTeacherWithoutNext(resultSet));
         }
         return userList;
     }

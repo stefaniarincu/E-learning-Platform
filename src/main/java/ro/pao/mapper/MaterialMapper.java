@@ -39,6 +39,27 @@ public class MaterialMapper {
         }
     }
 
+    private Document mapToDocumentWithoutNext(ResultSet resultSet) throws SQLException {
+        return new Document().toBuilder()
+                .id(UUID.fromString(resultSet.getString("material_id")))
+                .creationTime(resultSet.getTimestamp("creation_time").toLocalDateTime())
+                .discipline(Discipline.valueOf(resultSet.getString("discipline")))
+                .title(resultSet.getString("title"))
+                .description(resultSet.getString("description"))
+                .documentType(DocumentType.valueOf(resultSet.getString("document_type")))
+                .build();
+    }
+
+    public List<Document> mapToDocumentList(ResultSet resultSet) throws SQLException {
+        List<Document> documentList = new ArrayList<>();
+
+        while (resultSet.next()) {
+            documentList.add(mapToDocumentWithoutNext(resultSet));
+        }
+
+        return documentList;
+    }
+
     public Test mapToTest(ResultSet resultSet) throws SQLException {
         if (resultSet.next()) {
             return new Test().toBuilder()
@@ -52,6 +73,27 @@ public class MaterialMapper {
         } else {
             return null;
         }
+    }
+
+    private Test mapToTestWithoutNext(ResultSet resultSet) throws SQLException {
+        return new Test().toBuilder()
+                .id(UUID.fromString(resultSet.getString("material_id")))
+                .creationTime(resultSet.getTimestamp("creation_time").toLocalDateTime())
+                .discipline(Discipline.valueOf(resultSet.getString("discipline")))
+                .title(resultSet.getString("title"))
+                .description(resultSet.getString("description"))
+                .testType(TestType.valueOf(resultSet.getString("test_type")))
+                .build();
+    }
+
+    public List<Test> mapToTestList(ResultSet resultSet) throws SQLException {
+        List<Test> testList = new ArrayList<>();
+
+        while (resultSet.next()) {
+            testList.add(mapToTestWithoutNext(resultSet));
+        }
+
+        return testList;
     }
 
     public Video mapToVideo(ResultSet resultSet) throws SQLException {
@@ -69,31 +111,22 @@ public class MaterialMapper {
         }
     }
 
-    public List<Document> mapToDocumentList(ResultSet resultSet) throws SQLException {
-        List<Document> documentList = new ArrayList<>();
-
-        while (resultSet.next()) {
-            documentList.add(mapToDocument(resultSet));
-        }
-
-        return documentList;
-    }
-
-    public List<Test> mapToTestList(ResultSet resultSet) throws SQLException {
-        List<Test> testList = new ArrayList<>();
-
-        while (resultSet.next()) {
-            testList.add(mapToTest(resultSet));
-        }
-
-        return testList;
+    private Video mapToVideoWithoutNext(ResultSet resultSet) throws SQLException {
+        return new Video().toBuilder()
+                .id(UUID.fromString(resultSet.getString("material_id")))
+                .creationTime(resultSet.getTimestamp("creation_time").toLocalDateTime())
+                .discipline(Discipline.valueOf(resultSet.getString("discipline")))
+                .title(resultSet.getString("title"))
+                .description(resultSet.getString("description"))
+                .duration(resultSet.getTime("duration").toLocalTime())
+                .build();
     }
 
     public List<Video> mapToVideoList(ResultSet resultSet) throws SQLException {
         List<Video> videoList = new ArrayList<>();
 
         while (resultSet.next()) {
-            videoList.add(mapToVideo(resultSet));
+            videoList.add(mapToVideoWithoutNext(resultSet));
         }
 
         return videoList;
@@ -104,11 +137,11 @@ public class MaterialMapper {
 
         while (resultSet.next()){
             if (resultSet.getString("material_type").equalsIgnoreCase("document"))
-                materialList.add(mapToDocument(resultSet));
+                materialList.add(mapToDocumentWithoutNext(resultSet));
             else if (resultSet.getString("material_type").equalsIgnoreCase("test"))
-                materialList.add(mapToTest(resultSet));
+                materialList.add(mapToTestWithoutNext(resultSet));
             else
-                materialList.add(mapToVideo(resultSet));
+                materialList.add(mapToVideoWithoutNext(resultSet));
         }
 
         return materialList;

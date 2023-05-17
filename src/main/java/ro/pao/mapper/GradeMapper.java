@@ -31,11 +31,20 @@ public class GradeMapper {
         }
     }
 
+    public Grade mapToGradeWithoutNext(ResultSet resultSet) throws SQLException {
+        return new Grade().toBuilder()
+                .gradeId(UUID.fromString(resultSet.getString("grade_id")))
+                .studentId(UUID.fromString(resultSet.getString("student_id")))
+                .testId(UUID.fromString(resultSet.getString("test_id")))
+                .grade(resultSet.getDouble("grade"))
+                .build();
+    }
+
     public List<Grade> mapToGradeList(ResultSet resultSet) throws SQLException {
         List<Grade> gradeList = new ArrayList<>();
 
         while (resultSet.next()) {
-            gradeList.add(mapToGrade(resultSet));
+            gradeList.add(mapToGradeWithoutNext(resultSet));
         }
 
         return gradeList;
