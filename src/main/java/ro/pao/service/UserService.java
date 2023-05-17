@@ -2,11 +2,10 @@ package ro.pao.service;
 
 import ro.pao.model.abstracts.User;
 
-import java.util.Map;
-import java.util.UUID;
+import java.util.Optional;
 
-public interface UserService {
-    Map<UUID, User> addAllKindOfUsers();
+public interface UserService<T extends User> extends ServiceGeneric<T> {
+    Optional<T> getByEmail(String email);
 
-    Map<UUID, User> getAllItems();
+    boolean emailExists(T user);
 }

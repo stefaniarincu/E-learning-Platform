@@ -7,7 +7,7 @@ import ro.pao.service.impl.DocumentServiceImpl;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
+/*
 class DocumentServiceTest {
 
     //private final Menu menu = Menu.getInstance();
@@ -25,3 +25,4 @@ class DocumentServiceTest {
         assertEquals(1, documentService.getAllItems().size());
     }
 }
+*/

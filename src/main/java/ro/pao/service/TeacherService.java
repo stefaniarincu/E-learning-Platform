@@ -5,23 +5,6 @@ import ro.pao.model.Teacher;
 
 import java.util.*;
 
-public interface TeacherService {
-
-    Optional<Teacher> getById(UUID uuid);
-
-    Optional<Teacher> getByEmail(String email);
-
-    boolean emailExists(Teacher teacher);
-
-    void addOnlyOne(Teacher teacher);
-
-    void addMany(LinkedHashMap<UUID, Teacher> teachers);
-
-    LinkedHashMap<UUID, Teacher> getAllItems();
-
-    Map<UUID, Teacher> getUsersByDiscipline(Discipline discipline);
-
-    void removeById(UUID id);
-
-    void modifyById(UUID id, Teacher teacher);
+public interface TeacherService extends UserService<Teacher> {
+    List<Teacher> getTeachersByDiscipline(Discipline discipline);
 }
