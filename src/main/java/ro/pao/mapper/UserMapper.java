@@ -3,6 +3,7 @@ package ro.pao.mapper;
 import ro.pao.model.Student;
 import ro.pao.model.Teacher;
 import ro.pao.model.abstracts.User;
+import ro.pao.model.enums.Discipline;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -105,6 +106,16 @@ public class UserMapper {
         return mapToTeacherWithoutNext(resultSet);
     }
 
+    public List<Discipline> mapToDisciplineList(ResultSet resultSet) throws SQLException {
+        List<Discipline> disciplineList = new ArrayList<>();
+
+        while (resultSet.next()){
+            disciplineList.add(Discipline.valueOf(resultSet.getString("discipline")));
+        }
+
+        return disciplineList;
+    }
+
     public List<User> mapToUserList(ResultSet resultSet) throws SQLException {
         List<User> userList = new ArrayList<>();
 
@@ -112,7 +123,7 @@ public class UserMapper {
             if (resultSet.getString("user_type").equalsIgnoreCase("student"))
                 userList.add(mapToStudentWithoutNext(resultSet));
             else
-            userList.add(mapToTeacherWithoutNext(resultSet));
+                userList.add(mapToTeacherWithoutNext(resultSet));
         }
         return userList;
     }

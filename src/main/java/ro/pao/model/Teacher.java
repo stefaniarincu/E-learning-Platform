@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class Teacher extends User {
     private String degree;
+    @Setter
     private List<Discipline> teachCourses;
 
     public Teacher() {

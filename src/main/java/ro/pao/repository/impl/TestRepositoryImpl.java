@@ -19,7 +19,7 @@ public class TestRepositoryImpl implements TestRepository {
     private static final MaterialMapper materialMapper = MaterialMapper.getInstance();
     @Override
     public Optional<Test> getObjectById(UUID id) throws SQLException {
-        String sqlStatement = "SELECT * FROM MATERIAL m, TEST t ON m.material_id = t.material_id(+) WHERE m.material_id = ?";
+        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN TEST t ON m.material_id = t.material_id WHERE m.material_id = ?";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
@@ -33,7 +33,7 @@ public class TestRepositoryImpl implements TestRepository {
 
     @Override
     public void deleteObjectById(UUID id) {
-        String sqlStatement = "DELETE FROM MATERIAL WHERE m.material_id = ? AND LOWER(material_type) LIKE 'test'";
+        String sqlStatement = "DELETE FROM MATERIAL WHERE material_id = ? AND LOWER(material_type) LIKE 'test'";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
@@ -46,8 +46,24 @@ public class TestRepositoryImpl implements TestRepository {
     }
 
     @Override
+    public List<Test> getAllMaterialsByStudentId(UUID studentId) throws SQLException {
+        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN TEST t ON m.material_id = t.material_id WHERE LOWER(m.material_type) LIKE ? AND m.material_id IN (SELECT * FROM POSSESS WHERE user_id = ?)";
+
+        try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
+
+            preparedStatement.setString(1, "test");
+            preparedStatement.setString(2, studentId.toString());
+
+            return materialMapper.mapToTestList(preparedStatement.executeQuery());
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
+
+    @Override
     public void updateObjectById(UUID id, Test newObject) {
-        String sqlMaterialUpdate = "UPDATE MATERIAL SET creation_time = ?, discipline = ?, title = ?, description = ? WHERE material_id = ?";
+        String sqlMaterialUpdate = "UPDATE MATERIAL SET creation_time = ?, discipline = ?, title = ?, description = ?, user_id = ? WHERE material_id = ?";
         String sqlTestUpdate = "UPDATE TEST SET test_type = ? WHERE material_id = ?";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
@@ -59,7 +75,8 @@ public class TestRepositoryImpl implements TestRepository {
             materialUpdateStatement.setString(2, newObject.getDiscipline().toString()); //set discipline
             materialUpdateStatement.setString(3, newObject.getTitle()); //set title
             materialUpdateStatement.setString(4, newObject.getDescription()); //set description
-            materialUpdateStatement.setString(5, id.toString()); //set material_id
+            materialUpdateStatement.setString(5, newObject.getTeacherId().toString()); //set user_id
+            materialUpdateStatement.setString(6, id.toString()); //set material_id
 
             materialUpdateStatement.executeUpdate();
 
@@ -76,7 +93,7 @@ public class TestRepositoryImpl implements TestRepository {
 
     @Override
     public void addNewObject(Test newObject) {
-        String sqlMaterialInsert = "INSERT INTO MATERIAL (material_id, creation_time, discipline, title, description) VALUES(?, ?, ?, ?, ?)";
+        String sqlMaterialInsert = "INSERT INTO MATERIAL (material_id, creation_time, discipline, title, description, user_id, material_type) VALUES(?, ?, ?, ?, ?, ?, ?)";
         String sqlTestInsert = "INSERT INTO TEST (material_id, test_type) VALUES (?, ?)";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
@@ -89,6 +106,8 @@ public class TestRepositoryImpl implements TestRepository {
             materialInsertStatement.setString(3, newObject.getDiscipline().toString()); //set discipline
             materialInsertStatement.setString(4, newObject.getTitle()); //set title
             materialInsertStatement.setString(5, newObject.getDescription()); //set description
+            materialInsertStatement.setString(6, newObject.getTeacherId().toString()); //set user_id
+            materialInsertStatement.setString(7, "Test"); //set material_type
 
             materialInsertStatement.executeUpdate();
 
@@ -105,7 +124,7 @@ public class TestRepositoryImpl implements TestRepository {
 
     @Override
     public List<Test> getAll() throws SQLException {
-        String sqlStatement = "SELECT * FROM MATERIAL m, TEST t ON m.material_id = t.material_id WHERE LOWER(m.material_type) LIKE ?";
+        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN TEST t ON m.material_id = t.material_id WHERE LOWER(m.material_type) LIKE ?";
         try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
             preparedStatement.setString(1, "test");
@@ -133,7 +152,7 @@ public class TestRepositoryImpl implements TestRepository {
 
     @Override
     public List<Test> getAllTestsByType(TestType testType) throws SQLException {
-        String sqlStatement = "SELECT * FROM MATERIAL m, TEST t ON m.material_id = t.material_id WHERE LOWER(t.test_type) LIKE ?";
+        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN TEST t ON m.material_id = t.material_id WHERE LOWER(t.test_type) LIKE ?";
         try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
             preparedStatement.setString(1, testType.getTypeString());

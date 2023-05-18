@@ -7,10 +7,11 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-/*
-        while (true) {
-            Menu menu = Menu.getInstance();
 
+        Menu menu = Menu.getInstance();
+        menu.demoOnTeachers();
+
+/*
             menu.demoOnDocument();
 
             menu.demoOnVideo();
@@ -21,7 +22,7 @@ public class Main {
 
             menu.demoOnStudents();
 
-            menu.demoOnTeachers();
+
 
             menu.demoOnAllUsers();
 

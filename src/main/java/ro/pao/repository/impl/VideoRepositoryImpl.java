@@ -15,7 +15,7 @@ public class VideoRepositoryImpl implements MaterialRepository<Video> {
     private static final MaterialMapper materialMapper = MaterialMapper.getInstance();
     @Override
     public Optional<Video> getObjectById(UUID id)  throws SQLException {
-        String sqlStatement = "SELECT * FROM MATERIAL m, VIDEO v ON m.material_id = v.material_id(+) WHERE m.material_id = ?";
+        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN VIDEO v ON m.material_id = v.material_id WHERE m.material_id = ?";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
@@ -28,8 +28,24 @@ public class VideoRepositoryImpl implements MaterialRepository<Video> {
     }
 
     @Override
+    public List<Video> getAllMaterialsByStudentId(UUID studentId) throws SQLException {
+        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN VIDEO v ON m.material_id = v.material_id WHERE LOWER(m.material_type) LIKE ? AND m.material_id IN (SELECT * FROM POSSESS WHERE user_id = ?)";
+
+        try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
+
+            preparedStatement.setString(1, "document");
+            preparedStatement.setString(2, studentId.toString());
+
+            return materialMapper.mapToVideoList(preparedStatement.executeQuery());
+        } catch (SQLException e) {
+            throw e;
+        }
+    }
+
+    @Override
     public void deleteObjectById(UUID id) {
-        String sqlStatement = "DELETE FROM MATERIAL WHERE m.material_id = ? AND LOWER(material_type) LIKE 'video'";
+        String sqlStatement = "DELETE FROM MATERIAL WHERE material_id = ? AND LOWER(material_type) LIKE 'video'";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
@@ -43,7 +59,7 @@ public class VideoRepositoryImpl implements MaterialRepository<Video> {
 
     @Override
     public void updateObjectById(UUID id, Video newObject) {
-        String sqlMaterialUpdate = "UPDATE MATERIAL SET creation_time = ?, discipline = ?, title = ?, description = ? WHERE material_id = ?";
+        String sqlMaterialUpdate = "UPDATE MATERIAL SET creation_time = ?, discipline = ?, title = ?, description = ?, user_id = ? WHERE material_id = ?";
         String sqlVideoUpdate = "UPDATE VIDEO SET duration = ? WHERE material_id = ?";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
@@ -55,7 +71,8 @@ public class VideoRepositoryImpl implements MaterialRepository<Video> {
             materialUpdateStatement.setString(2, newObject.getDiscipline().toString()); //set discipline
             materialUpdateStatement.setString(3, newObject.getTitle()); //set title
             materialUpdateStatement.setString(4, newObject.getDescription()); //set description
-            materialUpdateStatement.setString(5, id.toString()); //set material_id
+            materialUpdateStatement.setString(5, newObject.getTeacherId().toString()); //set user_id
+            materialUpdateStatement.setString(6, id.toString()); //set material_id
 
             materialUpdateStatement.executeUpdate();
 
@@ -72,7 +89,7 @@ public class VideoRepositoryImpl implements MaterialRepository<Video> {
 
     @Override
     public void addNewObject(Video newObject) {
-        String sqlMaterialInsert = "INSERT INTO MATERIAL (material_id, creation_time, discipline, title, description) VALUES(?, ?, ?, ?, ?)";
+        String sqlMaterialInsert = "INSERT INTO MATERIAL (material_id, creation_time, discipline, title, description, user_id, material_type) VALUES(?, ?, ?, ?, ?, ?, ?)";
         String sqlVideoInsert = "INSERT INTO VIDEO (material_id, duration) VALUES (?, ?)";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
@@ -85,6 +102,8 @@ public class VideoRepositoryImpl implements MaterialRepository<Video> {
             materialInsertStatement.setString(3, newObject.getDiscipline().toString()); //set discipline
             materialInsertStatement.setString(4, newObject.getTitle()); //set title
             materialInsertStatement.setString(5, newObject.getDescription()); //set description
+            materialInsertStatement.setString(6, newObject.getTeacherId().toString()); //set user_id
+            materialInsertStatement.setString(7, "Video"); //set material_type
 
             materialInsertStatement.executeUpdate();
 
@@ -101,7 +120,7 @@ public class VideoRepositoryImpl implements MaterialRepository<Video> {
 
     @Override
     public List<Video> getAll() throws SQLException {
-        String sqlStatement = "SELECT * FROM MATERIAL m, Video v ON m.material_id = v.material_id WHERE LOWER(m.material_type) LIKE ?";
+        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN VIDEO v ON m.material_id = v.material_id WHERE LOWER(m.material_type) LIKE ?";
         try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
             preparedStatement.setString(1, "video");

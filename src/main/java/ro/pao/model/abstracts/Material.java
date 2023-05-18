@@ -2,6 +2,7 @@ package ro.pao.model.abstracts;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import ro.pao.model.Teacher;
 import ro.pao.model.enums.Discipline;
 
 import java.time.LocalDateTime;
@@ -13,13 +14,14 @@ import java.util.UUID;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 public abstract class Material implements Comparable<Material> {
     private UUID id;
     private LocalDateTime creationTime;
     private Discipline discipline;
     private String title;
     private String description;
+    private UUID teacherId;
 
     @Override
     public int compareTo(Material o) {

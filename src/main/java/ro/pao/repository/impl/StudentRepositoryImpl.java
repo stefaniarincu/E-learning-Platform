@@ -16,7 +16,7 @@ public class StudentRepositoryImpl implements StudentRepository {
     private static final UserMapper userMapper = UserMapper.getInstance();
     @Override
     public Optional<Student> getObjectById(UUID id) throws SQLException {
-        String sqlStatement = "SELECT * FROM USER u, STUDENT s ON u.user_id = s.user_id(+) WHERE u.user_id = ?";
+        String sqlStatement = "SELECT * FROM _USER u LEFT JOIN STUDENT s on u.user_id = s.user_id WHERE u.user_id = ?";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
@@ -30,7 +30,7 @@ public class StudentRepositoryImpl implements StudentRepository {
 
     @Override
     public void deleteObjectById(UUID id) {
-        String sqlStatement = "DELETE FROM USER WHERE u.user_id = ? AND LOWER(user_type) LIKE 'student'";
+        String sqlStatement = "DELETE FROM _USER WHERE user_id = ? AND LOWER(user_type) LIKE 'student'";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
@@ -44,7 +44,7 @@ public class StudentRepositoryImpl implements StudentRepository {
 
     @Override
     public void updateObjectById(UUID id, Student newObject) {
-        String sqlUserUpdate = "UPDATE USER SET first_name = ?, last_name = ?, email = ?, password = ? WHERE user_id = ?";
+        String sqlUserUpdate = "UPDATE _USER SET first_name = ?, last_name = ?, email = ?, password = ? WHERE user_id = ?";
         String sqlStudentUpdate = "SELECT * FROM STUDENT WHERE 1>2";//UPDATE STUDENT SET document_type = ? WHERE material_id = ?";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
@@ -74,7 +74,7 @@ public class StudentRepositoryImpl implements StudentRepository {
 
     @Override
     public void addNewObject(Student newObject) {
-        String sqlUserInsert = "INSERT INTO USER (user_id, first_name, last_name, email, password) VALUES(?, ?, ?, ?, ?)";
+        String sqlUserInsert = "INSERT INTO _USER (user_id, first_name, last_name, email, password, user_type) VALUES(?, ?, ?, ?, ?, ?)";
         String sqlStudentInsert = "SELECT * FROM STUDENT WHERE 1>2";//"INSERT INTO STUDENT (user_id) VALUES (?)";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
@@ -87,6 +87,7 @@ public class StudentRepositoryImpl implements StudentRepository {
             userInsertStatement.setString(3, newObject.getLastName()); //set last_name
             userInsertStatement.setString(4, newObject.getEmail()); //set email
             userInsertStatement.setString(5, newObject.getPassword()); //set password
+            userInsertStatement.setString(6, "Student"); //set user_type
 
             userInsertStatement.executeUpdate();
 
@@ -104,7 +105,7 @@ public class StudentRepositoryImpl implements StudentRepository {
 
     @Override
     public List<Student> getAll() throws SQLException {
-        String sqlStatement = "SELECT * FROM USER u, STUDENT s ON u.user_id = s.user_id WHERE LOWER(u.user_type) LIKE ?";
+        String sqlStatement = "SELECT * FROM _USER u LEFT JOIN STUDENT s on u.user_id = s.user_id WHERE LOWER(u.user_type) LIKE ?";
         try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
             preparedStatement.setString(1, "student");
@@ -121,12 +122,38 @@ public class StudentRepositoryImpl implements StudentRepository {
     }
 
     @Override
+    public void addMaterialToStudent(UUID studentId, UUID materialId) {
+        String sqlMaterialStudentInsert = "INSERT INTO POSSESS (user_id, material_id) VALUES(?, ?)";
+
+        try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
+             PreparedStatement materialStudentInsertStatement = connection.prepareStatement(sqlMaterialStudentInsert)) {
+
+            materialStudentInsertStatement.setString(1, studentId.toString()); //set user_id
+            materialStudentInsertStatement.setString(2, materialId.toString()); //set material_id
+
+            materialStudentInsertStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
     public List<Student> getAllStudentByAvgGrade(Double averageGrade) {
         return null;
     }
 
     @Override
-    public Optional<Student> getUserByEmail(String userEmail) {
-        return Optional.empty();
+    public Optional<Student> getUserByEmail(String userEmail) throws SQLException {
+        String sqlStatement = "SELECT * FROM _USER u LEFT JOIN STUDENT s ON u.user_id = s.user_id WHERE LOWER(email) LIKE ?";
+
+        try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
+
+            preparedStatement.setObject(1, userEmail.toLowerCase()); //set email
+
+            return Optional.ofNullable(userMapper.mapToStudent(preparedStatement.executeQuery()));
+        } catch (SQLException e) {
+            throw e;
+        }
     }
 }

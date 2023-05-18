@@ -112,6 +112,17 @@ public class MaterialRepositoryImpl implements MaterialRepository<Material> {
     }
 
     @Override
+    public List<Material> getAllMaterialsByStudentId(UUID studentId) throws SQLException {
+        List<Material> materialList = new ArrayList<>();
+
+        materialList.addAll(documentRepository.getAllMaterialsByStudentId(studentId));
+        materialList.addAll(testRepository.getAllMaterialsByStudentId(studentId));
+        materialList.addAll(videoRepository.getAllMaterialsByStudentId(studentId));
+
+        return materialList;
+    }
+
+    @Override
     public List<Material> getMaterialByTeacher(UUID teacherId) {
         return null;
     }

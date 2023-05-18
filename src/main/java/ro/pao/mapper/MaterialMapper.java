@@ -32,6 +32,7 @@ public class MaterialMapper {
                             .discipline(Discipline.valueOf(resultSet.getString("discipline")))
                             .title(resultSet.getString("title"))
                             .description(resultSet.getString("description"))
+                            .teacherId(UUID.fromString(resultSet.getString("user_id")))
                             .documentType(DocumentType.valueOf(resultSet.getString("document_type")))
                             .build();
         } else {
@@ -46,6 +47,7 @@ public class MaterialMapper {
                 .discipline(Discipline.valueOf(resultSet.getString("discipline")))
                 .title(resultSet.getString("title"))
                 .description(resultSet.getString("description"))
+                .teacherId(UUID.fromString(resultSet.getString("user_id")))
                 .documentType(DocumentType.valueOf(resultSet.getString("document_type")))
                 .build();
     }
@@ -68,6 +70,7 @@ public class MaterialMapper {
                             .discipline(Discipline.valueOf(resultSet.getString("discipline")))
                             .title(resultSet.getString("title"))
                             .description(resultSet.getString("description"))
+                            .teacherId(UUID.fromString(resultSet.getString("user_id")))
                             .testType(TestType.valueOf(resultSet.getString("test_type")))
                             .build();
         } else {
@@ -82,6 +85,7 @@ public class MaterialMapper {
                 .discipline(Discipline.valueOf(resultSet.getString("discipline")))
                 .title(resultSet.getString("title"))
                 .description(resultSet.getString("description"))
+                .teacherId(UUID.fromString(resultSet.getString("user_id")))
                 .testType(TestType.valueOf(resultSet.getString("test_type")))
                 .build();
     }
@@ -104,6 +108,7 @@ public class MaterialMapper {
                             .discipline(Discipline.valueOf(resultSet.getString("discipline")))
                             .title(resultSet.getString("title"))
                             .description(resultSet.getString("description"))
+                            .teacherId(UUID.fromString(resultSet.getString("user_id")))
                             .duration(resultSet.getTime("duration").toLocalTime())
                             .build();
         } else {
@@ -118,6 +123,7 @@ public class MaterialMapper {
                 .discipline(Discipline.valueOf(resultSet.getString("discipline")))
                 .title(resultSet.getString("title"))
                 .description(resultSet.getString("description"))
+                .teacherId(UUID.fromString(resultSet.getString("user_id")))
                 .duration(resultSet.getTime("duration").toLocalTime())
                 .build();
     }

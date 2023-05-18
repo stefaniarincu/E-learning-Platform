@@ -20,14 +20,16 @@ public class UserRepositoryImpl implements UserRepository<User> {
     @Override
     public Optional<User> getObjectById(UUID id) throws SQLException {
         Optional<? extends User> user = studentRepository.getObjectById(id);
-        if(user.isPresent())
+
+        if (user.isPresent())
             return user.map(u -> (User) u);
+
         return teacherRepository.getObjectById(id).map(u -> u);
     }
 
     @Override
     public void deleteObjectById(UUID id) {
-        String sqlStatement = "DELETE FROM USER WHERE user_id = ?";
+        String sqlStatement = "DELETE FROM _USER WHERE user_id = ?";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
@@ -79,7 +81,12 @@ public class UserRepositoryImpl implements UserRepository<User> {
     }
 
     @Override
-    public Optional<User> getUserByEmail(String userEmail) {
-        return Optional.empty();
+    public Optional<User> getUserByEmail(String userEmail) throws SQLException {
+        Optional<? extends User> user = studentRepository.getUserByEmail(userEmail);
+
+        if (user.isPresent())
+            return user.map(u -> (User) u);
+
+        return teacherRepository.getUserByEmail(userEmail).map(u -> u);
     }
 }

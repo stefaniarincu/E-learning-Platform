@@ -1,8 +1,101 @@
 package ro.pao.application;
 
+import ro.pao.model.Teacher;
+import ro.pao.model.abstracts.User;
+import ro.pao.model.enums.Discipline;
+import ro.pao.service.TeacherService;
+import ro.pao.service.UserService;
+import ro.pao.service.impl.TeacherServiceImpl;
+import ro.pao.service.impl.UserServiceImpl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 public class Menu {
     private static Menu INSTANCE;
+
+    private final UserService<User> userService = new UserServiceImpl();
+    private final TeacherService teacherService = new TeacherServiceImpl();
+
+
+    public static Menu getInstance() {
+        return (INSTANCE == null ? new Menu() : INSTANCE);
+    }
+
+    public void demoOnTeachers() {
+
+        String intro = "\n\n-----Performing different operations on a Teacher object-----";
+
+        System.out.println(intro);
+
+        Teacher teacher = Teacher.builder()
+                .id(UUID.randomUUID())
+                .firstName("Ileana")
+                .lastName("Popescu")
+                .email("ileana.pop@gmail")
+                .password("WhIejaW1234")
+                .degree("masterand")
+                .build();
+
+        userService.addOnlyOne(teacher);
+        //userService.removeById(teacher.getId());
 /*
+        LinkedHashMap<UUID, Teacher> teachers = Stream.of(Teacher.builder()
+                                .id(UUID.randomUUID())
+                                .firstName("Elena")
+                                .lastName("Enescu")
+                                .email("ella.enescu@gmail")
+                                .password("PaRoLa")
+                                .teachCourses(teachCourses2)
+                                .build(),
+                        Teacher.builder()
+                                .id(UUID.randomUUID())
+                                .firstName("Alin")
+                                .lastName("Alina")
+                                .email("alin.al@gmail")
+                                .password("PARoLA")
+                                .teachCourses(teachCourses3)
+                                .build())
+                .collect(Collectors.toMap(Teacher::getId, Function.identity(), (s1, s2) -> s1, LinkedHashMap::new));
+
+        teacherService.addMany(teachers);
+
+
+        System.out.println("\nFor example: we can try to add a new teacher.\n  Before trying to add:");
+
+        teacherService.getAllItems().forEach((key, tch) -> System.out.println("Teacher: " + tch.getFirstName() + " " + tch.getLastName()));
+
+        List<Discipline> teachCourses4 = List.of(Discipline.ENGLISH, Discipline.INFORMATICS);
+
+        teacherService.addOnlyOne(Teacher.builder()
+                .id(UUID.randomUUID())
+                .firstName("Carmen")
+                .lastName("Ceva")
+                .email("carmen.ceva@gmail")
+                .password("HAshSet")
+                .teachCourses(teachCourses4)
+                .build());
+
+        System.out.println("\n  After trying to add:");
+
+        teacherService.getAllItems().forEach((key, tch) -> System.out.println("Teacher: " + tch.getFirstName() + " " + tch.getLastName()));
+
+
+        System.out.println("\nAnother example: we can display all the teachers that teach a specified discipline.");
+
+        Map<UUID, Teacher> teacherByDiscipline = teacherService.getUsersByDiscipline(Discipline.MATHEMATICS);
+
+        System.out.println("\n  For discipline: " + Discipline.MATHEMATICS);
+
+        if (teacherByDiscipline != null) {
+            teacherByDiscipline.forEach((key, tch) -> System.out.println("Teacher: " + tch.getFirstName() + " " + tch.getLastName()));
+        } else {
+            System.out.println("There are no teachers!");
+        }*/
+    }
+
+    /*
     private final DocumentService documentService = new DocumentServiceImpl();
 
     private final VideoService videoService = new VideoServiceImpl();
@@ -17,9 +110,7 @@ public class Menu {
 
     private final UserService userService = new UserServiceImpl();
 
-    public static Menu getInstance() {
-        return (INSTANCE == null ? new Menu() : INSTANCE);
-    }
+
 
     public void demoOnDocument() {
 
@@ -454,84 +545,7 @@ public class Menu {
         }
     }
 
-    public void demoOnTeachers() {
 
-        String intro = "\n\n-----Performing different operations on a Teacher object-----";
-
-        System.out.println(intro);
-
-
-        List<Discipline> teachCourses1 = List.of(Discipline.MATHEMATICS, Discipline.INFORMATICS, Discipline.PHYSICS);
-
-        List<Discipline> teachCourses2 = List.of(Discipline.CHEMISTRY, Discipline.PHYSICS);
-
-        List<Discipline> teachCourses3 = List.of(Discipline.ENGLISH);
-
-
-        Teacher teacher = Teacher.builder()
-                .id(UUID.randomUUID())
-                .firstName("Radu")
-                .lastName("Popescu")
-                .email("radu.pop@gmail")
-                .password("WhIejaW")
-                .teachCourses(teachCourses1)
-                .build();
-
-        teacherService.addOnlyOne(teacher);
-
-        LinkedHashMap<UUID, Teacher> teachers = Stream.of(Teacher.builder()
-                                .id(UUID.randomUUID())
-                                .firstName("Elena")
-                                .lastName("Enescu")
-                                .email("ella.enescu@gmail")
-                                .password("PaRoLa")
-                                .teachCourses(teachCourses2)
-                                .build(),
-                        Teacher.builder()
-                                .id(UUID.randomUUID())
-                                .firstName("Alin")
-                                .lastName("Alina")
-                                .email("alin.al@gmail")
-                                .password("PARoLA")
-                                .teachCourses(teachCourses3)
-                                .build())
-                .collect(Collectors.toMap(Teacher::getId, Function.identity(), (s1, s2) -> s1, LinkedHashMap::new));
-
-        teacherService.addMany(teachers);
-
-
-        System.out.println("\nFor example: we can try to add a new teacher.\n  Before trying to add:");
-
-        teacherService.getAllItems().forEach((key, tch) -> System.out.println("Teacher: " + tch.getFirstName() + " " + tch.getLastName()));
-
-        List<Discipline> teachCourses4 = List.of(Discipline.ENGLISH, Discipline.INFORMATICS);
-
-        teacherService.addOnlyOne(Teacher.builder()
-                .id(UUID.randomUUID())
-                .firstName("Carmen")
-                .lastName("Ceva")
-                .email("carmen.ceva@gmail")
-                .password("HAshSet")
-                .teachCourses(teachCourses4)
-                .build());
-
-        System.out.println("\n  After trying to add:");
-
-        teacherService.getAllItems().forEach((key, tch) -> System.out.println("Teacher: " + tch.getFirstName() + " " + tch.getLastName()));
-
-
-        System.out.println("\nAnother example: we can display all the teachers that teach a specified discipline.");
-
-        Map<UUID, Teacher> teacherByDiscipline = teacherService.getUsersByDiscipline(Discipline.MATHEMATICS);
-
-        System.out.println("\n  For discipline: " + Discipline.MATHEMATICS);
-
-        if (teacherByDiscipline != null) {
-            teacherByDiscipline.forEach((key, tch) -> System.out.println("Teacher: " + tch.getFirstName() + " " + tch.getLastName()));
-        } else {
-            System.out.println("There are no teachers!");
-        }
-    }
 
     public void demoOnAllUsers() {
 

@@ -5,13 +5,14 @@ import ro.pao.model.enums.Discipline;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
-public interface GradeRepository {
-    List<Grade> getAllByStudentId(UUID studentId) throws SQLException;
+public interface GradeRepository extends RepositoryGeneric<Grade>{
+    List<Grade> getAllGradesByStudentId(UUID studentId) throws SQLException;
 
-    List<Grade> getAllByTestId(UUID testId) throws SQLException;
+    List<Grade> getAllGradesByTestId(UUID testId) throws SQLException;
 
-    List<Grade> getAllByDiscipline(Discipline discipline) throws SQLException;
+    List<Grade> getAllGradesByDiscipline(Discipline discipline) throws SQLException;
 
 }
