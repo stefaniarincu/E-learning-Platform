@@ -11,9 +11,7 @@ import java.util.List;
 import static ro.pao.application.utils.Constants.CSV_PATH_WRITE;
 
 public class CsvWriter {
-
     private static CsvWriter INSTANCE;
-
 
     private CsvWriter() {
     }
@@ -27,7 +25,7 @@ public class CsvWriter {
     }
 
     public String writeLine(String[] line, Path path) throws Exception {
-        try (CSVWriter writer = new CSVWriter(new FileWriter(path.toFile()))) {
+        try (CSVWriter writer = new CSVWriter(new FileWriter(path.toFile(), true))) {
             writer.writeNext(line);
         }
         return Files.readString(path);
