@@ -12,7 +12,4 @@ public interface GradeRepository extends RepositoryGeneric<Grade>{
     List<Grade> getAllGradesByStudentId(UUID studentId) throws SQLException;
 
     List<Grade> getAllGradesByTestId(UUID testId) throws SQLException;
-
-    List<Grade> getAllGradesByDiscipline(Discipline discipline) throws SQLException;
-
 }

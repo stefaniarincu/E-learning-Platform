@@ -1,6 +1,6 @@
 package ro.pao.service;
 
-import ro.pao.model.abstracts.User;
+import ro.pao.model.sealed.User;
 
 import java.util.Optional;
 

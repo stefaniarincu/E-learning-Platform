@@ -1,10 +1,13 @@
 package ro.pao.repository.impl;
 
 import ro.pao.config.DatabaseConfiguration;
-import ro.pao.model.Student;
-import ro.pao.model.Teacher;
-import ro.pao.model.abstracts.User;
+import ro.pao.exceptions.ObjectNotFoundException;
+import ro.pao.exceptions.UserNotFoundException;
+import ro.pao.model.sealed.Student;
+import ro.pao.model.sealed.Teacher;
+import ro.pao.model.sealed.User;
 import ro.pao.repository.UserRepository;
+import ro.pao.service.impl.LogServiceImpl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,18 +16,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class UserRepositoryImpl implements UserRepository<User> {
     private final UserRepository<Student> studentRepository = new StudentRepositoryImpl();
     private final UserRepository<Teacher> teacherRepository = new TeacherRepositoryImpl();
     @Override
-    public Optional<User> getObjectById(UUID id) throws SQLException {
-        Optional<? extends User> user = studentRepository.getObjectById(id);
+    public Optional<User> getObjectById(UUID id) throws SQLException, ObjectNotFoundException {
+        try {
+            Optional<? extends User> user = studentRepository.getObjectById(id);
 
-        if (user.isPresent())
-            return user.map(u -> (User) u);
+            if (user.isPresent())
+                return user.map(u -> (User) u);
+        } catch (UserNotFoundException e1) {
+            try {
+                return teacherRepository.getObjectById(id).map(u -> u);
+            } catch (UserNotFoundException e2) {
+                throw new UserNotFoundException("No user found with the id: " + id);
+            }
+        }
 
-        return teacherRepository.getObjectById(id).map(u -> u);
+        return Optional.empty();
     }
 
     @Override
@@ -37,7 +49,7 @@ public class UserRepositoryImpl implements UserRepository<User> {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
         }
     }
 
@@ -51,7 +63,7 @@ public class UserRepositoryImpl implements UserRepository<User> {
     }
 
     @Override
-    public void addNewObject(User newObject) {
+    public void addNewObject(User newObject) throws SQLException {
         if(newObject instanceof Student student) {
             studentRepository.addNewObject(student);
         } else {
@@ -60,7 +72,7 @@ public class UserRepositoryImpl implements UserRepository<User> {
     }
 
     @Override
-    public List<User> getAll() throws SQLException {
+    public List<User> getAll() {
         List<User> userList = new ArrayList<>();
 
         userList.addAll(studentRepository.getAll());
@@ -70,7 +82,7 @@ public class UserRepositoryImpl implements UserRepository<User> {
     }
 
     @Override
-    public void addAllFromGivenList(List<User> objectList) {
+    public void addAllFromGivenList(List<User> objectList) throws SQLException {
         for(User user : objectList) {
             if(user instanceof Student student) {
                 studentRepository.addNewObject(student);
@@ -81,7 +93,7 @@ public class UserRepositoryImpl implements UserRepository<User> {
     }
 
     @Override
-    public Optional<User> getUserByEmail(String userEmail) throws SQLException {
+    public Optional<User> getUserByEmail(String userEmail) throws SQLException, UserNotFoundException {
         Optional<? extends User> user = studentRepository.getUserByEmail(userEmail);
 
         if (user.isPresent())

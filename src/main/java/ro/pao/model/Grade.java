@@ -14,6 +14,7 @@ public class Grade {
     private UUID studentId;
     private UUID testId;
     private Double grade;
+    private Double weight;
 
     public Grade() {
 

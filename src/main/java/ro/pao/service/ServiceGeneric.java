@@ -1,6 +1,9 @@
 package ro.pao.service;
 
 
+import ro.pao.exceptions.MaterialNotFoundException;
+import ro.pao.exceptions.ObjectNotFoundException;
+import ro.pao.exceptions.UserNotFoundException;
 import ro.pao.model.Document;
 
 import java.sql.SQLException;
@@ -10,9 +13,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ServiceGeneric<T> {
-    Optional<T> getById(UUID id) throws SQLException;
+    Optional<T> getById(UUID id);
 
-    List<T> getAllItems() throws SQLException;
+    List<T> getAllItems();
 
     void addOnlyOne(T newObject);
 

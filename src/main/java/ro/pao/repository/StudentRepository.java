@@ -1,11 +1,11 @@
 package ro.pao.repository;
 
-import ro.pao.model.Student;
+import ro.pao.model.sealed.Student;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface StudentRepository extends UserRepository<Student>{
-    void addMaterialToStudent(UUID studentId, UUID materialId);
+    void enrollStudentToCourse(UUID studentId, UUID courseId);
     List<Student> getAllStudentByAvgGrade(Double averageGrade);
 }

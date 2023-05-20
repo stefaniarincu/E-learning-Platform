@@ -1,16 +1,12 @@
 package ro.pao.application;
 
-import ro.pao.model.Teacher;
-import ro.pao.model.abstracts.User;
-import ro.pao.model.enums.Discipline;
+
+import ro.pao.model.sealed.User;
 import ro.pao.service.TeacherService;
 import ro.pao.service.UserService;
 import ro.pao.service.impl.TeacherServiceImpl;
 import ro.pao.service.impl.UserServiceImpl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 public class Menu {
     private static Menu INSTANCE;
@@ -23,8 +19,8 @@ public class Menu {
         return (INSTANCE == null ? new Menu() : INSTANCE);
     }
 
-    public void demoOnTeachers() {
-
+    public void demoOnTeachers(){
+/*
         String intro = "\n\n-----Performing different operations on a Teacher object-----";
 
         System.out.println(intro);
@@ -38,9 +34,26 @@ public class Menu {
                 .degree("masterand")
                 .build();
 
-        userService.addOnlyOne(teacher);
-        //userService.removeById(teacher.getId());
-/*
+       // userService.addOnlyOne(teacher);
+
+        userService.getById(UUID.randomUUID());
+
+        Student student = Student.builder()
+                .id(UUID.randomUUID())
+                .firstName("asr")
+                .lastName("asddent")
+                .email("asdat@gmail")
+                .password("yhahahash!?")
+                .build();
+
+
+        userService.addOnlyOne(student);
+
+        Optional<User> userOpt = userService.getById(student.getId());
+        userOpt.ifPresent(user -> System.out.println(user.getLastName()));
+
+        userService.removeById(student.getId());
+
         LinkedHashMap<UUID, Teacher> teachers = Stream.of(Teacher.builder()
                                 .id(UUID.randomUUID())
                                 .firstName("Elena")

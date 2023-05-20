@@ -25,6 +25,7 @@ public class GradeMapper {
                     .studentId(UUID.fromString(resultSet.getString("student_id")))
                     .testId(UUID.fromString(resultSet.getString("test_id")))
                     .grade(resultSet.getDouble("grade"))
+                    .weight(resultSet.getDouble("weight"))
                     .build();
         } else {
             return null;
@@ -37,6 +38,7 @@ public class GradeMapper {
                 .studentId(UUID.fromString(resultSet.getString("student_id")))
                 .testId(UUID.fromString(resultSet.getString("test_id")))
                 .grade(resultSet.getDouble("grade"))
+                .weight(resultSet.getDouble("weight"))
                 .build();
     }
 

@@ -1,7 +1,7 @@
 package ro.pao.service;
 
 import ro.pao.model.enums.Discipline;
-import ro.pao.model.Teacher;
+import ro.pao.model.sealed.Teacher;
 
 import java.util.*;
 

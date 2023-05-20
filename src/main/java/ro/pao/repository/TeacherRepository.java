@@ -1,6 +1,6 @@
 package ro.pao.repository;
 
-import ro.pao.model.Teacher;
+import ro.pao.model.sealed.Teacher;
 import ro.pao.model.enums.Discipline;
 
 import java.sql.SQLException;

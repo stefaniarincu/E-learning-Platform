@@ -1,5 +1,7 @@
 package ro.pao.service.impl;
 
+import ro.pao.exceptions.MaterialNotFoundException;
+import ro.pao.exceptions.ObjectNotFoundException;
 import ro.pao.model.Document;
 import ro.pao.model.Test;
 import ro.pao.model.Video;
@@ -16,18 +18,19 @@ public class MaterialServiceImpl implements MaterialService<Material> {
     private final MaterialService<Video> videoService = new VideoServiceImpl();
 
     @Override
-    public Optional<Material> getById(UUID id) throws SQLException {
+    public Optional<Material> getById(UUID id) {
         Optional<? extends Material> material = documentService.getById(id);
-        if(material.isPresent())
+        if (material.isPresent())
             return material.map(m -> (Material) m);
+
         material = testService.getById(id);
-        if(material.isPresent())
+        if (material.isPresent())
             return material.map(m -> (Material) m);
         return videoService.getById(id).map(m -> m);
     }
 
     @Override
-    public List<Material> getAllItems() throws SQLException {
+    public List<Material> getAllItems(){
         List<Material> materialList = new ArrayList<>();
 
         materialList.addAll(documentService.getAllItems());

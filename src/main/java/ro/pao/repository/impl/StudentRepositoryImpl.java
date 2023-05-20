@@ -1,30 +1,47 @@
 package ro.pao.repository.impl;
 
+import ro.pao.application.csv.CsvLogger;
 import ro.pao.config.DatabaseConfiguration;
+import ro.pao.exceptions.ObjectNotFoundException;
+import ro.pao.exceptions.UserNotFoundException;
 import ro.pao.mapper.UserMapper;
-import ro.pao.model.Student;
+import ro.pao.model.sealed.Student;
 import ro.pao.repository.StudentRepository;
+import ro.pao.service.impl.LogServiceImpl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class StudentRepositoryImpl implements StudentRepository {
     private static final UserMapper userMapper = UserMapper.getInstance();
     @Override
-    public Optional<Student> getObjectById(UUID id) throws SQLException {
+    public Optional<Student> getObjectById(UUID id) throws SQLException, ObjectNotFoundException {
         String sqlStatement = "SELECT * FROM _USER u LEFT JOIN STUDENT s on u.user_id = s.user_id WHERE u.user_id = ?";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
-            preparedStatement.setString(1, id.toString());
 
-            return Optional.ofNullable(userMapper.mapToStudent(preparedStatement.executeQuery()));
-        } catch (SQLException e) {
-            throw e;
+            preparedStatement.setString(1, id.toString());
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            Optional<Student> student = Optional.ofNullable(userMapper.mapToStudent(resultSet));
+
+            if (student.isEmpty()) {
+                CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.SEVERE, "Error: Select student by id failed!"));
+
+                throw new UserNotFoundException("No student found with the id: " + id);
+            } else {
+                CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.INFO, "Selected from Student!"));
+            }
+
+            return student;
         }
     }
 
@@ -34,11 +51,14 @@ public class StudentRepositoryImpl implements StudentRepository {
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
-            preparedStatement.setString(1, id.toString());
 
+            preparedStatement.setString(1, id.toString());
             preparedStatement.executeUpdate();
+
+            CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.INFO, "Student deleted!"));
         } catch (SQLException e) {
-            e.printStackTrace();
+            CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.SEVERE, "Error: Delete student failed!"));
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
         }
     }
 
@@ -50,6 +70,7 @@ public class StudentRepositoryImpl implements StudentRepository {
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
              PreparedStatement userUpdateStatement = connection.prepareStatement(sqlUserUpdate);
              PreparedStatement studentUpdateStatement = connection.prepareStatement(sqlStudentUpdate)) {
+
             connection.setAutoCommit(false);
 
             userUpdateStatement.setString(1, newObject.getFirstName()); //set first_name
@@ -67,19 +88,21 @@ public class StudentRepositoryImpl implements StudentRepository {
             studentUpdateStatement.executeUpdate();
 
             connection.commit();
+
+            CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.INFO, "Student updated!"));
         } catch (SQLException e) {
-            e.printStackTrace();
+            CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.SEVERE, "Error: Update student failed!"));
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
         }
     }
 
     @Override
     public void addNewObject(Student newObject) {
         String sqlUserInsert = "INSERT INTO _USER (user_id, first_name, last_name, email, password, user_type) VALUES(?, ?, ?, ?, ?, ?)";
-        String sqlStudentInsert = "SELECT * FROM STUDENT WHERE 1>2";//"INSERT INTO STUDENT (user_id) VALUES (?)";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
-             PreparedStatement userInsertStatement = connection.prepareStatement(sqlUserInsert);
-             PreparedStatement studentInsertStatement = connection.prepareStatement(sqlStudentInsert)) {
+             PreparedStatement userInsertStatement = connection.prepareStatement(sqlUserInsert)) {
+
             connection.setAutoCommit(false);
 
             userInsertStatement.setString(1, newObject.getId().toString()); //set user_id
@@ -91,29 +114,30 @@ public class StudentRepositoryImpl implements StudentRepository {
 
             userInsertStatement.executeUpdate();
 
-            /* TO DO
-            studentInsertStatement.setString(1, newObject.getId().toString()); //set user_id
-            */
-
-            studentInsertStatement.executeUpdate();
-
             connection.commit();
+
+            CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.INFO, "1 new Student inserted!"));
         } catch (SQLException e) {
-            e.printStackTrace();
+            CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.SEVERE, "Error: Insert student failed!"));
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
         }
     }
 
     @Override
-    public List<Student> getAll() throws SQLException {
+    public List<Student> getAll(){
         String sqlStatement = "SELECT * FROM _USER u LEFT JOIN STUDENT s on u.user_id = s.user_id WHERE LOWER(u.user_type) LIKE ?";
+
         try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
+
             preparedStatement.setString(1, "student");
 
             return userMapper.mapToStudentList(preparedStatement.executeQuery());
         } catch (SQLException e) {
-            throw e;
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
         }
+
+        return new ArrayList<>();
     }
 
     @Override
@@ -122,18 +146,21 @@ public class StudentRepositoryImpl implements StudentRepository {
     }
 
     @Override
-    public void addMaterialToStudent(UUID studentId, UUID materialId) {
-        String sqlMaterialStudentInsert = "INSERT INTO POSSESS (user_id, material_id) VALUES(?, ?)";
+    public void enrollStudentToCourse(UUID studentId, UUID courseId) {
+        String sqlStudentCourseInsert = "INSERT INTO ENROLLED (user_id, course_id) VALUES(?, ?)";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
-             PreparedStatement materialStudentInsertStatement = connection.prepareStatement(sqlMaterialStudentInsert)) {
+             PreparedStatement studentCourseInsertStatement = connection.prepareStatement(sqlStudentCourseInsert)) {
 
-            materialStudentInsertStatement.setString(1, studentId.toString()); //set user_id
-            materialStudentInsertStatement.setString(2, materialId.toString()); //set material_id
+            studentCourseInsertStatement.setString(1, studentId.toString()); //set user_id
+            studentCourseInsertStatement.setString(2, courseId.toString()); //set course_id
 
-            materialStudentInsertStatement.executeUpdate();
+            studentCourseInsertStatement.executeUpdate();
+
+            CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.INFO, "1 Student was enrolled to a course!"));
         } catch (SQLException e) {
-            e.printStackTrace();
+            CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.SEVERE, "Error: Student enrollment to course failed!"));
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
         }
     }
 
@@ -143,17 +170,25 @@ public class StudentRepositoryImpl implements StudentRepository {
     }
 
     @Override
-    public Optional<Student> getUserByEmail(String userEmail) throws SQLException {
+    public Optional<Student> getUserByEmail(String userEmail) throws SQLException, UserNotFoundException {
         String sqlStatement = "SELECT * FROM _USER u LEFT JOIN STUDENT s ON u.user_id = s.user_id WHERE LOWER(email) LIKE ?";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
 
             preparedStatement.setObject(1, userEmail.toLowerCase()); //set email
+            ResultSet resultSet = preparedStatement.executeQuery();
 
-            return Optional.ofNullable(userMapper.mapToStudent(preparedStatement.executeQuery()));
-        } catch (SQLException e) {
-            throw e;
+            Optional<Student> student = Optional.ofNullable(userMapper.mapToStudent(resultSet));
+
+            if (student.isEmpty()) {
+                CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.INFO, "Error: Select student by email failed!"));
+                throw new UserNotFoundException("No student found with the email: " + userEmail);
+            } else {
+                CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.INFO, "Selected from student!"));
+            }
+
+            return student;
         }
     }
 }

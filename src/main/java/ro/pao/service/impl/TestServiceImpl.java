@@ -1,5 +1,6 @@
 package ro.pao.service.impl;
 
+import ro.pao.exceptions.ObjectNotFoundException;
 import ro.pao.model.Test;
 import ro.pao.model.enums.Discipline;
 import ro.pao.model.enums.TestType;
@@ -9,28 +10,45 @@ import ro.pao.service.TestService;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.logging.Level;
 
 public class TestServiceImpl implements TestService {
     private static final TestRepository testRepository = new TestRepositoryImpl();
 
     @Override
-    public Optional<Test> getById(UUID id) throws SQLException {
-        return testRepository.getObjectById(id);
+    public Optional<Test> getById(UUID id) {
+        try {
+            return testRepository.getObjectById(id);
+        } catch (ObjectNotFoundException e) {
+            LogServiceImpl.getInstance().log(Level.WARNING, e.getMessage());
+        } catch (SQLException e) {
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
+        }
+
+        return Optional.empty();
     }
 
     @Override
-    public List<Test> getAllItems() throws SQLException {
+    public List<Test> getAllItems() {
         return testRepository.getAll();
     }
 
     @Override
     public void addOnlyOne(Test newObject) {
-        testRepository.addNewObject(newObject);
+        try {
+            testRepository.addNewObject(newObject);
+        } catch (SQLException e) {
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
+        }
     }
 
     @Override
     public void addMany(List<Test> objectList) {
-        testRepository.addAllFromGivenList(objectList);
+        try {
+            testRepository.addAllFromGivenList(objectList);
+        } catch (SQLException e) {
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
+        }
     }
 
     @Override

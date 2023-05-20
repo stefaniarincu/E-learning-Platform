@@ -1,13 +1,14 @@
 package ro.pao.repository.impl;
 
 import ro.pao.config.DatabaseConfiguration;
-import ro.pao.mapper.MaterialMapper;
+import ro.pao.exceptions.ObjectNotFoundException;
 import ro.pao.model.Document;
 import ro.pao.model.Test;
 import ro.pao.model.Video;
 import ro.pao.model.abstracts.Material;
 import ro.pao.model.enums.Discipline;
 import ro.pao.repository.MaterialRepository;
+import ro.pao.service.impl.LogServiceImpl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,15 +17,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Level;
 
 public class MaterialRepositoryImpl implements MaterialRepository<Material> {
-    private final static MaterialMapper materialMapper = MaterialMapper.getInstance();
     private final MaterialRepository<Document> documentRepository = new DocumentRepositoryImpl();
     private final MaterialRepository<Test> testRepository = new TestRepositoryImpl();
     private final MaterialRepository<Video> videoRepository = new VideoRepositoryImpl();
 
     @Override
-    public Optional<Material> getObjectById(UUID id) throws SQLException {
+    public Optional<Material> getObjectById(UUID id) throws SQLException, ObjectNotFoundException {
         Optional<? extends Material> material = documentRepository.getObjectById(id);
         if(material.isPresent())
             return material.map(m -> (Material) m);
@@ -44,7 +45,7 @@ public class MaterialRepositoryImpl implements MaterialRepository<Material> {
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
         }
     }
 
@@ -62,7 +63,7 @@ public class MaterialRepositoryImpl implements MaterialRepository<Material> {
     }
 
     @Override
-    public void addNewObject(Material newObject) {
+    public void addNewObject(Material newObject) throws SQLException {
         if(newObject instanceof Document document) {
             documentRepository.addNewObject(document);
         }
@@ -75,7 +76,7 @@ public class MaterialRepositoryImpl implements MaterialRepository<Material> {
     }
 
     @Override
-    public List<Material> getAll() throws SQLException{
+    public List<Material> getAll() {
         List<Material> materialList = new ArrayList<>();
 
         materialList.addAll(documentRepository.getAll());
@@ -86,7 +87,7 @@ public class MaterialRepositoryImpl implements MaterialRepository<Material> {
     }
 
     @Override
-    public void addAllFromGivenList(List<Material> objectList) {
+    public void addAllFromGivenList(List<Material> objectList) throws SQLException {
         for(Material material : objectList) {
             if(material instanceof Document document) {
                 documentRepository.addNewObject(document);

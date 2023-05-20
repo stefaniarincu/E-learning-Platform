@@ -1,8 +1,8 @@
 package ro.pao.mapper;
 
-import ro.pao.model.Student;
-import ro.pao.model.Teacher;
-import ro.pao.model.abstracts.User;
+import ro.pao.model.sealed.Student;
+import ro.pao.model.sealed.Teacher;
+import ro.pao.model.sealed.User;
 import ro.pao.model.enums.Discipline;
 
 import java.sql.ResultSet;
@@ -29,6 +29,7 @@ public class UserMapper {
                     .lastName(resultSet.getString("last_name"))
                     .email(resultSet.getString("email"))
                     .password(resultSet.getString("password"))
+                    .averageGrade(resultSet.getDouble("average_grade"))
                     .build();
         } else {
             return null;
@@ -42,6 +43,7 @@ public class UserMapper {
                 .lastName(resultSet.getString("last_name"))
                 .email(resultSet.getString("email"))
                 .password(resultSet.getString("password"))
+                .averageGrade(resultSet.getDouble("average_grade"))
                 .build();
     }
 

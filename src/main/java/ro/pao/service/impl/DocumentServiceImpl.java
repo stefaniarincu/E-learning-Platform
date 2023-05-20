@@ -1,5 +1,6 @@
 package ro.pao.service.impl;
 
+import ro.pao.exceptions.ObjectNotFoundException;
 import ro.pao.model.Document;
 import ro.pao.model.enums.Discipline;
 import ro.pao.model.enums.DocumentType;
@@ -9,27 +10,44 @@ import ro.pao.service.DocumentService;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.logging.Level;
 
 public class DocumentServiceImpl implements DocumentService {
     private static final DocumentRepository documentRepository = new DocumentRepositoryImpl();
     @Override
-    public Optional<Document> getById(UUID id) throws SQLException {
-        return documentRepository.getObjectById(id);
+    public Optional<Document> getById(UUID id) {
+        try {
+            return documentRepository.getObjectById(id);
+        } catch (ObjectNotFoundException e) {
+            LogServiceImpl.getInstance().log(Level.WARNING, e.getMessage());
+        } catch (SQLException e) {
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
+        }
+
+        return Optional.empty();
     }
 
     @Override
-    public List<Document> getAllItems() throws SQLException {
+    public List<Document> getAllItems() {
         return documentRepository.getAll();
     }
 
     @Override
     public void addOnlyOne(Document newObject) {
-        documentRepository.addNewObject(newObject);
+        try {
+            documentRepository.addNewObject(newObject);
+        } catch (SQLException e) {
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
+        }
     }
 
     @Override
     public void addMany(List<Document> objectList) {
-        documentRepository.addAllFromGivenList(objectList);
+        try {
+            documentRepository.addAllFromGivenList(objectList);
+        } catch (SQLException e) {
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
+        }
     }
 
     @Override
@@ -43,8 +61,12 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public List<Document> getDocumentsByType(DocumentType documentType) throws SQLException {
-        return documentRepository.getAllDocumentsByType(documentType);
+    public List<Document> getDocumentsByType(DocumentType documentType) {
+        try {
+            return documentRepository.getAllDocumentsByType(documentType);
+        } catch (SQLException e) {
+            return new ArrayList<>();
+        }
     }
 
     @Override
