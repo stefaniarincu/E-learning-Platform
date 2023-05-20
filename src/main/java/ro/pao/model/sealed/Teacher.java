@@ -1,11 +1,10 @@
-package ro.pao.model;
+package ro.pao.model.sealed;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
-import ro.pao.model.enums.Discipline;
-import ro.pao.model.abstracts.User;
+import ro.pao.model.Course;
 
 import java.util.List;
 
@@ -13,10 +12,10 @@ import java.util.List;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Teacher extends User {
+public non-sealed class Teacher extends User {
     private String degree;
-    @Setter
-    private List<Discipline> teachCourses;
+
+    private List<Course> teachCourses;
 
     public Teacher() {
 
@@ -26,12 +25,12 @@ public class Teacher extends User {
     public String toString() {
         StringBuilder matString = new StringBuilder();
 
-        for (Discipline discipline: teachCourses) {
-            matString.append(discipline.toString()).append("\n");
+        for (Course course: teachCourses) {
+            matString.append(course.getTitle()).append("\n");
         }
 
         if (!matString.isEmpty()) {
-            return "TEACHER: " + super.toString() + " (has the degree: " + this.degree + ") uploaded materials for the following disciplines: "
+            return "TEACHER: " + super.toString() + " (has the degree: " + this.degree + ") teaches the courses: "
                         + matString + "\n";
         } else {
             return "TEACHER: " + super.toString() + " (has the degree: " + this.degree + ").\n";

@@ -1,4 +1,4 @@
-package ro.pao.model.abstracts;
+package ro.pao.model.sealed;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import java.util.UUID;
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class User {
+public sealed abstract class User permits Teacher, Student{
     private UUID id;
     private String firstName;
     private String lastName;

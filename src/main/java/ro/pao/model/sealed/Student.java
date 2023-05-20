@@ -1,10 +1,17 @@
-package ro.pao.model;
+package ro.pao.model.sealed;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import ro.pao.model.Document;
+import ro.pao.model.Grade;
+import ro.pao.model.Test;
+import ro.pao.model.Video;
 import ro.pao.model.abstracts.Material;
-import ro.pao.model.abstracts.User;
+import ro.pao.model.sealed.User;
+import ro.pao.strategyPattern.CalculateAverageGrade;
+import ro.pao.strategyPattern.CalculateAverageGradeStrategy;
+import ro.pao.strategyPattern.CalculateAverageGradeWeighted;
 
 import java.text.DecimalFormat;
 import java.util.*;
@@ -12,18 +19,19 @@ import java.util.*;
 @SuperBuilder(toBuilder = true)
 @Getter
 @Setter
-public class Student extends User {
-    private List<Material> materials;
-    private List<Grade> grades;
+public non-sealed class Student extends User {
+    private List<Material> materialList;
+    private List<Grade> gradeList;
     private Double averageGrade;
+    CalculateAverageGradeStrategy calculateAverageGrade = new CalculateAverageGrade();
 
     public Student(UUID id, String firstName, String lastName, String email, String password)
     {
         super(id, firstName, lastName, email, password);
 
-        this.materials = new ArrayList<>();
+        this.materialList = new ArrayList<>();
 
-        this.grades = new ArrayList<>();
+        this.gradeList = new ArrayList<>();
 
         this.averageGrade = 0.0;
     }
@@ -32,10 +40,10 @@ public class Student extends User {
     {
         super(id, firstName, lastName, email, password);
 
-        this.materials = materials;
+        this.materialList = materials;
         Collections.sort(materials);
 
-        this.grades = new ArrayList<>();
+        this.gradeList = new ArrayList<>();
 
         this.averageGrade = 0.0;
     }
@@ -44,10 +52,10 @@ public class Student extends User {
     {
         super(id, firstName, lastName, email, password);
 
-        this.materials = materials;
+        this.materialList = materials;
         Collections.sort(materials);
 
-        this.grades = grades;
+        this.gradeList = grades;
 
         this.averageGrade = calculateAverageGrade();
     }
@@ -75,7 +83,7 @@ public class Student extends User {
     public String toString() {
         StringBuilder matString = new StringBuilder();
 
-        for (Material material: materials) {
+        for (Material material: materialList) {
             if (material instanceof Document) {
                 matString.append("DOCUMENT ---> ").append(material);
             } else if (material instanceof Video){
