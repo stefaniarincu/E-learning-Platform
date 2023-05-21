@@ -64,5 +64,27 @@ public class VideoServiceImpl implements VideoService {
     public List<Video> getAllMaterialsByDiscipline(Discipline discipline) {
         return videoRepository.getAllMaterialsByDiscipline(discipline);
     }
+
+    @Override
+    public Optional<Video> getMaxDurationVideo() {
+        Video maxDurationVideo = null;
+        int maxDurationValue = Integer.MIN_VALUE;
+
+        List<Video> videoList = getAllItems();
+
+        Iterator<Video> videoIterator = videoList.iterator();
+        while (videoIterator.hasNext()) {
+            Video video = videoIterator.next();
+
+            int duration = video.getDuration().getHour() + video.getDuration().getMinute() + video.getDuration().getSecond();
+
+            if (duration > maxDurationValue) {
+                maxDurationValue = duration;
+                maxDurationVideo = video;
+            }
+        }
+
+        return Optional.ofNullable(maxDurationVideo);
+    }
 }
 

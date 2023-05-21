@@ -1,38 +1,29 @@
 package ro.pao;
 
 import ro.pao.application.Menu;
-import ro.pao.gateways.Requests;
-
-import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-
-        Requests requests = new Requests();
-        requests.saveRequestInfo();
-
         Menu menu = Menu.getInstance();
-        menu.demoOnTeachers();
 
-/*
-            menu.demoOnDocument();
+        menu.demoOnGateway();
 
-            menu.demoOnVideo();
+        menu.demoOnInsertingUsers();
 
-            menu.demoOnTest();
+        menu.demoOnInsertingCourses();
 
-            menu.demoOnAllMaterials();
+        menu.demoOnInsertingGrades();
 
-            menu.demoOnStudents();
+        menu.demoOnEnrollingStudents();
 
+        menu.demoOnIterator();
 
+        menu.demoOnStrategyDesignPattern();
 
-            menu.demoOnAllUsers();
+        menu.demoOnThreads();
 
-            if ("exit".equals(scanner.next())) {
-                break;
-            }
-        }*/
+        menu.demoOnLoggingErrors();
+
+        menu.demo();
     }
 }

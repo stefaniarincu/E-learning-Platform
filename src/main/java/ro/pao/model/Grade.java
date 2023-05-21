@@ -12,7 +12,6 @@ import java.util.UUID;
 public class Grade {
     private UUID gradeId;
     private UUID studentId;
-    private UUID testId;
     private Double grade;
     private Double weight;
 

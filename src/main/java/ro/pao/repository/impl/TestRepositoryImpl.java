@@ -63,7 +63,7 @@ public class TestRepositoryImpl implements TestRepository {
 
     @Override
     public List<Test> getAllMaterialsByStudentId(UUID studentId) {
-        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN COURSE c ON m.course_id = c.course_id WHERE LOWER(m.material_type) LIKE ? AND c.course_id IN (SELECT * FROM ENROLLED WHERE user_id = ?)";
+        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN TEST t ON m.material_id = t.material_id WHERE LOWER(m.material_type) LIKE ? AND m.course_id IN (SELECT course_id FROM ENROLLED WHERE user_id = ?)";
 
         try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
@@ -128,7 +128,7 @@ public class TestRepositoryImpl implements TestRepository {
             materialInsertStatement.setString(3, newObject.getTitle()); //set title
             materialInsertStatement.setString(4, newObject.getDescription()); //set description
             materialInsertStatement.setString(5, newObject.getCourseId().toString()); //set course_id
-            materialInsertStatement.setString(6, "Test"); //set material_type
+            materialInsertStatement.setString(6, "test"); //set material_type
 
             materialInsertStatement.executeUpdate();
 
@@ -168,31 +168,13 @@ public class TestRepositoryImpl implements TestRepository {
 
     @Override
     public List<Test> getAllMaterialsByDiscipline(Discipline discipline) {
-        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN COURSE c ON m.course_id = c.course_id WHERE LOWER(m.material_type) LIKE ? AND LOWER(c.discipline) LIKE ?";
+        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN TEST t ON m.material_id = t.material_id WHERE LOWER(m.material_type) LIKE ? AND m.course_id IN (SELECT course_id FROM COURSE WHERE discipline LIKE ?)";
 
         try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
 
             preparedStatement.setString(1, "test"); //set material_type
             preparedStatement.setString(2, discipline.toString().toLowerCase()); //set discipline
-
-            return materialMapper.mapToTestList(preparedStatement.executeQuery());
-        } catch (SQLException e) {
-            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
-        }
-
-        return new ArrayList<>();
-    }
-
-    @Override
-    public List<Test> getMaterialByTeacher(UUID teacherId) {
-        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN COURSE c ON m.course_id = c.course_id WHERE LOWER(m.material_type) LIKE ? AND c.user_id LIKE ?";
-
-        try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
-
-            preparedStatement.setString(1, "test"); //set material_type
-            preparedStatement.setString(2, teacherId.toString()); //set user_id
 
             return materialMapper.mapToTestList(preparedStatement.executeQuery());
         } catch (SQLException e) {
@@ -210,6 +192,24 @@ public class TestRepositoryImpl implements TestRepository {
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
 
             preparedStatement.setString(1, testType.getTypeString());
+
+            return materialMapper.mapToTestList(preparedStatement.executeQuery());
+        } catch (SQLException e) {
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
+        }
+
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Test> getAllMaterialsByCourseId(UUID courseId) {
+        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN TEST t ON m.material_id = t.material_id WHERE  m.course_id = ? AND LOWER(m.material_type) LIKE ?";
+
+        try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
+
+            preparedStatement.setString(1, courseId.toString());
+            preparedStatement.setString(2, "test");
 
             return materialMapper.mapToTestList(preparedStatement.executeQuery());
         } catch (SQLException e) {

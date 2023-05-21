@@ -8,7 +8,7 @@ public class CalculateAverageGrade implements CalculateAverageGradeStrategy{
 
     @Override
     public double calculateAverageGrade(List<Grade> grades) {
-        if (grades.isEmpty()) {
+        if (grades == null || grades.isEmpty()) {
             return 0.0;
         }
 

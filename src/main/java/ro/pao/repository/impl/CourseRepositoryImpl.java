@@ -123,4 +123,38 @@ public class CourseRepositoryImpl implements CourseRepository {
     public void addAllFromGivenList(List<Course> objectList) {
         objectList.forEach(this::addNewObject);
     }
+
+    @Override
+    public List<Course> getAllCoursesByTeacherId(UUID teacherId) {
+        String sqlStatement = "SELECT * FROM COURSE WHERE user_id = ?";
+
+        try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
+
+            preparedStatement.setString(1, teacherId.toString());
+
+            return courseMapper.mapToCourseList(preparedStatement.executeQuery());
+        } catch (SQLException e) {
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
+        }
+
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Course> getAllCoursesByStudentId(UUID studentId) {
+        String sqlStatement = "SELECT * FROM COURSE c LEFT JOIN ENROLLED e ON c.course_id = e.course_id WHERE e.user_id = ?";
+
+        try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
+
+            preparedStatement.setString(1, studentId.toString());
+
+            return courseMapper.mapToCourseList(preparedStatement.executeQuery());
+        } catch (SQLException e) {
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
+        }
+
+        return new ArrayList<>();
+    }
 }

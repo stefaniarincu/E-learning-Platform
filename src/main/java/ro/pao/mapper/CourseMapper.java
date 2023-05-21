@@ -1,7 +1,6 @@
 package ro.pao.mapper;
 
 import ro.pao.model.Course;
-import ro.pao.model.Grade;
 import ro.pao.model.enums.Discipline;
 
 import java.sql.ResultSet;
@@ -26,7 +25,7 @@ public class CourseMapper {
                     .courseId(UUID.fromString(resultSet.getString("course_id")))
                     .title(resultSet.getString("title"))
                     .discipline(Discipline.valueOf(resultSet.getString("discipline")))
-                    .teacherId(UUID.fromString(resultSet.getString("teacher_id")))
+                    .teacherId(UUID.fromString(resultSet.getString("user_id")))
                     .build();
         } else {
             return null;
@@ -38,7 +37,7 @@ public class CourseMapper {
                 .courseId(UUID.fromString(resultSet.getString("course_id")))
                 .title(resultSet.getString("title"))
                 .discipline(Discipline.valueOf(resultSet.getString("discipline")))
-                .teacherId(UUID.fromString(resultSet.getString("teacher_id")))
+                .teacherId(UUID.fromString(resultSet.getString("user_id")))
                 .build();
     }
 

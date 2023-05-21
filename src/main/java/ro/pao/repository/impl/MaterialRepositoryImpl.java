@@ -113,7 +113,7 @@ public class MaterialRepositoryImpl implements MaterialRepository<Material> {
     }
 
     @Override
-    public List<Material> getAllMaterialsByStudentId(UUID studentId) throws SQLException {
+    public List<Material> getAllMaterialsByStudentId(UUID studentId) {
         List<Material> materialList = new ArrayList<>();
 
         materialList.addAll(documentRepository.getAllMaterialsByStudentId(studentId));
@@ -124,7 +124,13 @@ public class MaterialRepositoryImpl implements MaterialRepository<Material> {
     }
 
     @Override
-    public List<Material> getMaterialByTeacher(UUID teacherId) {
-        return null;
+    public List<Material> getAllMaterialsByCourseId(UUID courseId) {
+        List<Material> materialList = new ArrayList<>();
+
+        materialList.addAll(documentRepository.getAllMaterialsByCourseId(courseId));
+        materialList.addAll(testRepository.getAllMaterialsByCourseId(courseId));
+        materialList.addAll(videoRepository.getAllMaterialsByCourseId(courseId));
+
+        return materialList;
     }
 }

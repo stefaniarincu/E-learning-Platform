@@ -65,6 +65,7 @@ public class UserMapper {
                     .lastName(resultSet.getString("last_name"))
                     .email(resultSet.getString("email"))
                     .password(resultSet.getString("password"))
+                    .degree(resultSet.getString("degree"))
                     .build();
         } else {
             return null;
@@ -78,6 +79,7 @@ public class UserMapper {
                 .lastName(resultSet.getString("last_name"))
                 .email(resultSet.getString("email"))
                 .password(resultSet.getString("password"))
+                .degree(resultSet.getString("degree"))
                 .build();
     }
 
@@ -106,16 +108,6 @@ public class UserMapper {
         if (resultSet.getString("user_type").equalsIgnoreCase("student"))
             return mapToStudentWithoutNext(resultSet);
         return mapToTeacherWithoutNext(resultSet);
-    }
-
-    public List<Discipline> mapToDisciplineList(ResultSet resultSet) throws SQLException {
-        List<Discipline> disciplineList = new ArrayList<>();
-
-        while (resultSet.next()){
-            disciplineList.add(Discipline.valueOf(resultSet.getString("discipline")));
-        }
-
-        return disciplineList;
     }
 
     public List<User> mapToUserList(ResultSet resultSet) throws SQLException {

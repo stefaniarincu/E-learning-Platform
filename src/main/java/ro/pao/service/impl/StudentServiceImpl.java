@@ -44,7 +44,20 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<Student> getAllItems() {
-        return studentRepository.getAll();
+        List<Student> studentList = studentRepository.getAll();
+
+        Iterator<Student> studentIterator = studentList.iterator();
+        while (studentIterator.hasNext()) {
+            Student student = studentIterator.next();
+
+            List<Grade> grades = gradeRepository.getAllGradesByStudentId(student.getId());
+            List<Material> materials = materialRepository.getAllMaterialsByStudentId(student.getId());
+
+            student.setGradeList(grades);
+            student.setMaterialList(materials);
+        }
+
+        return studentList;
     }
 
     @Override
@@ -76,27 +89,84 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Student> getStudentsByMaterialId(UUID materialId) {
-        return null;
-    }
-
-    @Override
     public List<Student> getStudentsWithLowerGrade(Double averageGrade) {
-        return null;
+        List<Student> studentList = studentRepository.getAllStudentsWithLowerAvgGrade(averageGrade);
+
+        Iterator<Student> studentIterator = studentList.iterator();
+        while (studentIterator.hasNext()) {
+            Student student = studentIterator.next();
+
+            List<Grade> grades = gradeRepository.getAllGradesByStudentId(student.getId());
+            List<Material> materials = materialRepository.getAllMaterialsByStudentId(student.getId());
+
+            student.setGradeList(grades);
+            student.setMaterialList(materials);
+        }
+
+        return studentList;
     }
 
     @Override
     public List<Student> getStudentsWithHigherGrade(Double averageGrade) {
-        return null;
+        List<Student> studentList = studentRepository.getAllStudentsWithHigherAvgGrade(averageGrade);
+
+        Iterator<Student> studentIterator = studentList.iterator();
+        while (studentIterator.hasNext()) {
+            Student student = studentIterator.next();
+
+            List<Grade> grades = gradeRepository.getAllGradesByStudentId(student.getId());
+            List<Material> materials = materialRepository.getAllMaterialsByStudentId(student.getId());
+
+            student.setGradeList(grades);
+            student.setMaterialList(materials);
+        }
+
+        return studentList;
+    }
+
+    @Override
+    public void enrollStudent(UUID studentId, UUID courseId) {
+        studentRepository.enrollStudentToCourse(studentId, courseId);
+    }
+
+    @Override
+    public void updateStudentGradeList(UUID studentId) {
+        Optional<Student> studentOptional = getById(studentId);
+
+        if (studentOptional.isPresent()) {
+            Student student = studentOptional.get();
+
+            List<Grade> grades = student.getGradeList();
+
+            student.setGradeList(grades);
+
+            double averageGrade = student.calculateAverageGrade();
+            student.setAverageGrade(averageGrade);
+
+            studentRepository.updateStudentAverageGrade(studentId, averageGrade);
+        }
     }
 
     @Override
     public Optional<Student> getByEmail(String email) {
-        return Optional.empty();
-    }
+        try {
+            Optional<Student> studentOptional = studentRepository.getUserByEmail(email);
+            if (studentOptional.isPresent()) {
+                Student student = studentOptional.get();
+                List<Grade> grades = gradeRepository.getAllGradesByStudentId(student.getId());
+                List<Material> materials = materialRepository.getAllMaterialsByStudentId(student.getId());
 
-    @Override
-    public boolean emailExists(Student user) {
-        return false;
+                student.setGradeList(grades);
+                student.setMaterialList(materials);
+
+                return Optional.of(student);
+            }
+            return Optional.empty();
+        } catch (ObjectNotFoundException e) {
+            LogServiceImpl.getInstance().log(Level.INFO, e.getMessage());
+        } catch (SQLException e) {
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
+        }
+        return Optional.empty();
     }
 }

@@ -22,8 +22,7 @@ public class GradeMapper {
         if(resultSet.next()) {
             return new Grade().toBuilder()
                     .gradeId(UUID.fromString(resultSet.getString("grade_id")))
-                    .studentId(UUID.fromString(resultSet.getString("student_id")))
-                    .testId(UUID.fromString(resultSet.getString("test_id")))
+                    .studentId(UUID.fromString(resultSet.getString("user_id")))
                     .grade(resultSet.getDouble("grade"))
                     .weight(resultSet.getDouble("weight"))
                     .build();
@@ -35,8 +34,7 @@ public class GradeMapper {
     public Grade mapToGradeWithoutNext(ResultSet resultSet) throws SQLException {
         return new Grade().toBuilder()
                 .gradeId(UUID.fromString(resultSet.getString("grade_id")))
-                .studentId(UUID.fromString(resultSet.getString("student_id")))
-                .testId(UUID.fromString(resultSet.getString("test_id")))
+                .studentId(UUID.fromString(resultSet.getString("user_id")))
                 .grade(resultSet.getDouble("grade"))
                 .weight(resultSet.getDouble("weight"))
                 .build();

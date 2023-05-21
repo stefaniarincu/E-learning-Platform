@@ -4,7 +4,6 @@ import ro.pao.model.Document;
 import ro.pao.model.Test;
 import ro.pao.model.Video;
 import ro.pao.model.abstracts.Material;
-import ro.pao.model.enums.Discipline;
 import ro.pao.model.enums.DocumentType;
 import ro.pao.model.enums.TestType;
 
@@ -31,6 +30,7 @@ public class MaterialMapper {
                             .creationTime(resultSet.getTimestamp("creation_time").toLocalDateTime())
                             .title(resultSet.getString("title"))
                             .description(resultSet.getString("description"))
+                            .courseId(UUID.fromString(resultSet.getString("course_id")))
                             .documentType(DocumentType.valueOf(resultSet.getString("document_type")))
                             .build();
         } else {
@@ -44,6 +44,7 @@ public class MaterialMapper {
                 .creationTime(resultSet.getTimestamp("creation_time").toLocalDateTime())
                 .title(resultSet.getString("title"))
                 .description(resultSet.getString("description"))
+                .courseId(UUID.fromString(resultSet.getString("course_id")))
                 .documentType(DocumentType.valueOf(resultSet.getString("document_type")))
                 .build();
     }
@@ -65,6 +66,7 @@ public class MaterialMapper {
                             .creationTime(resultSet.getTimestamp("creation_time").toLocalDateTime())
                             .title(resultSet.getString("title"))
                             .description(resultSet.getString("description"))
+                            .courseId(UUID.fromString(resultSet.getString("course_id")))
                             .testType(TestType.valueOf(resultSet.getString("test_type")))
                             .build();
         } else {
@@ -78,6 +80,7 @@ public class MaterialMapper {
                 .creationTime(resultSet.getTimestamp("creation_time").toLocalDateTime())
                 .title(resultSet.getString("title"))
                 .description(resultSet.getString("description"))
+                .courseId(UUID.fromString(resultSet.getString("course_id")))
                 .testType(TestType.valueOf(resultSet.getString("test_type")))
                 .build();
     }
@@ -99,6 +102,7 @@ public class MaterialMapper {
                             .creationTime(resultSet.getTimestamp("creation_time").toLocalDateTime())
                             .title(resultSet.getString("title"))
                             .description(resultSet.getString("description"))
+                            .courseId(UUID.fromString(resultSet.getString("course_id")))
                             .duration(resultSet.getTime("duration").toLocalTime())
                             .build();
         } else {
@@ -112,6 +116,7 @@ public class MaterialMapper {
                 .creationTime(resultSet.getTimestamp("creation_time").toLocalDateTime())
                 .title(resultSet.getString("title"))
                 .description(resultSet.getString("description"))
+                .courseId(UUID.fromString(resultSet.getString("course_id")))
                 .duration(resultSet.getTime("duration").toLocalTime())
                 .build();
     }

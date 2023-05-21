@@ -44,7 +44,7 @@ public class VideoRepositoryImpl implements MaterialRepository<Video> {
 
     @Override
     public List<Video> getAllMaterialsByStudentId(UUID studentId) {
-        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN COURSE c ON m.course_id = c.course_id WHERE LOWER(m.material_type) LIKE ? AND c.course_id IN (SELECT * FROM ENROLLED WHERE user_id = ?)";
+        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN VIDEO v ON m.material_id = v.material_id WHERE LOWER(m.material_type) LIKE ? AND m.material_id IN (SELECT course_id FROM ENROLLED WHERE user_id = ?)";
 
         try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
@@ -125,7 +125,7 @@ public class VideoRepositoryImpl implements MaterialRepository<Video> {
             materialInsertStatement.setString(3, newObject.getTitle()); //set title
             materialInsertStatement.setString(4, newObject.getDescription()); //set description
             materialInsertStatement.setString(5, newObject.getCourseId().toString()); //set course_id
-            materialInsertStatement.setString(6, "Video"); //set material_type
+            materialInsertStatement.setString(6, "video"); //set material_type
 
             materialInsertStatement.executeUpdate();
 
@@ -165,7 +165,7 @@ public class VideoRepositoryImpl implements MaterialRepository<Video> {
 
     @Override
     public List<Video> getAllMaterialsByDiscipline(Discipline discipline) {
-        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN COURSE c ON m.course_id = c.course_id WHERE LOWER(m.material_type) LIKE ? AND LOWER(c.discipline) LIKE ?";
+        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN VIDEO v ON m.material_id = v.material_id WHERE LOWER(m.material_type) LIKE ? AND m.course_id IN (SELECT course_id FROM COURSE WHERE LOWER(c.discipline) LIKE ?)";
 
         try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
@@ -182,14 +182,14 @@ public class VideoRepositoryImpl implements MaterialRepository<Video> {
     }
 
     @Override
-    public List<Video> getMaterialByTeacher(UUID teacherId) {
-        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN COURSE c ON m.course_id = c.course_id WHERE LOWER(m.material_type) LIKE ? AND c.user_id LIKE ?";
+    public List<Video> getAllMaterialsByCourseId(UUID courseId) {
+        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN VIDEO v ON m.material_id = v.material_id WHERE m.course_id = ? AND LOWER(m.material_type) LIKE ?";
 
         try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
 
-            preparedStatement.setString(1, "video"); //set material_type
-            preparedStatement.setString(2, teacherId.toString()); //set user_id
+            preparedStatement.setString(1, courseId.toString());
+            preparedStatement.setString(2, "video");
 
             return materialMapper.mapToVideoList(preparedStatement.executeQuery());
         } catch (SQLException e) {

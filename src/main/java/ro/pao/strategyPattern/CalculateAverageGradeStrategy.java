@@ -6,5 +6,5 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface CalculateAverageGradeStrategy {
-    public double calculateAverageGrade(List<Grade> grades) throws SQLException;
+    double calculateAverageGrade(List<Grade> grades);
 }

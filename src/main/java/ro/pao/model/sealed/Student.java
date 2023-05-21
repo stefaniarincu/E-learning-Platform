@@ -8,22 +8,19 @@ import ro.pao.model.Grade;
 import ro.pao.model.Test;
 import ro.pao.model.Video;
 import ro.pao.model.abstracts.Material;
-import ro.pao.model.sealed.User;
 import ro.pao.strategyPattern.CalculateAverageGrade;
 import ro.pao.strategyPattern.CalculateAverageGradeStrategy;
-import ro.pao.strategyPattern.CalculateAverageGradeWeighted;
 
-import java.text.DecimalFormat;
 import java.util.*;
 
 @SuperBuilder(toBuilder = true)
 @Getter
 @Setter
 public non-sealed class Student extends User {
+    private Double averageGrade;
     private List<Material> materialList;
     private List<Grade> gradeList;
-    private Double averageGrade;
-    CalculateAverageGradeStrategy calculateAverageGrade = new CalculateAverageGrade();
+    CalculateAverageGradeStrategy averageGradeStrategy = new CalculateAverageGrade();
 
     public Student(UUID id, String firstName, String lastName, String email, String password)
     {
@@ -64,19 +61,13 @@ public non-sealed class Student extends User {
 
     }
 
+    public void setAverageGradeStrategy(CalculateAverageGradeStrategy averageGradeStrategy) {
+        this.averageGradeStrategy = averageGradeStrategy;
+        this.averageGrade = calculateAverageGrade();
+    }
+
     public double calculateAverageGrade() {
-        DecimalFormat df = new DecimalFormat("#.##");
-
-        //if(grades == null)
-            return 0.00;
-
-        /*return Double.parseDouble(df.format(grades.stream()
-                .mapToDouble(gradeList -> gradeList.stream()
-                        .mapToDouble(Double::doubleValue)
-                        .average()
-                        .orElse(0.00))
-                .average()
-                .orElse(0.00)));*/
+        return averageGradeStrategy.calculateAverageGrade(gradeList);
     }
 
     @Override

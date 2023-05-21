@@ -1,9 +1,11 @@
 package ro.pao.service.impl;
 
 import ro.pao.exceptions.ObjectNotFoundException;
-import ro.pao.model.enums.Discipline;
+import ro.pao.model.Course;
 import ro.pao.model.sealed.Teacher;
+import ro.pao.repository.CourseRepository;
 import ro.pao.repository.TeacherRepository;
+import ro.pao.repository.impl.CourseRepositoryImpl;
 import ro.pao.repository.impl.TeacherRepositoryImpl;
 import ro.pao.service.TeacherService;
 
@@ -13,10 +15,22 @@ import java.util.logging.Level;
 
 public class TeacherServiceImpl implements TeacherService {
     private final static TeacherRepository teacherRepository = new TeacherRepositoryImpl();
+    private final static CourseRepository courseRepository = new CourseRepositoryImpl();
     @Override
     public Optional<Teacher> getById(UUID id) {
         try {
-            return teacherRepository.getObjectById(id);
+            Optional<Teacher> teacherOptional = teacherRepository.getObjectById(id);
+
+            if (teacherOptional.isPresent()) {
+                Teacher teacher = teacherOptional.get();
+                List<Course> courses = courseRepository.getAllCoursesByTeacherId(id);
+
+                teacher.setTeachCourses(courses);
+
+                return Optional.of(teacher);
+            }
+
+            return Optional.empty();
         } catch (ObjectNotFoundException e) {
             LogServiceImpl.getInstance().log(Level.INFO, e.getMessage());
         } catch (SQLException e) {
@@ -27,7 +41,18 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public List<Teacher> getAllItems() {
-        return teacherRepository.getAll();
+        List<Teacher> teacherList = teacherRepository.getAll();
+
+        Iterator<Teacher> teacherIterator = teacherList.iterator();
+        while (teacherIterator.hasNext()) {
+            Teacher teacher = teacherIterator.next();
+
+            List<Course> courses = courseRepository.getAllCoursesByTeacherId(teacher.getId());
+
+            teacher.setTeachCourses(courses);
+        }
+
+        return teacherList;
     }
 
     @Override
@@ -59,17 +84,41 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<Teacher> getTeachersByDiscipline(Discipline discipline) {
-        return null;
+    public List<Teacher> getTeachersByDegree(String degree) {
+        List<Teacher> teacherList = teacherRepository.getAllTeachersByDegree(degree);
+
+        Iterator<Teacher> teacherIterator = teacherList.iterator();
+        while (teacherIterator.hasNext()) {
+            Teacher teacher = teacherIterator.next();
+
+            List<Course> courses = courseRepository.getAllCoursesByTeacherId(teacher.getId());
+
+            teacher.setTeachCourses(courses);
+        }
+
+        return teacherList;
     }
 
     @Override
     public Optional<Teacher> getByEmail(String email) {
-        return Optional.empty();
-    }
+        try {
+            Optional<Teacher> teacherOptional = teacherRepository.getUserByEmail(email);
 
-    @Override
-    public boolean emailExists(Teacher user) {
-        return false;
+            if (teacherOptional.isPresent()) {
+                Teacher teacher = teacherOptional.get();
+                List<Course> courses = courseRepository.getAllCoursesByTeacherId(teacher.getId());
+
+                teacher.setTeachCourses(courses);
+
+                return Optional.of(teacher);
+            }
+
+            return Optional.empty();
+        } catch (ObjectNotFoundException e) {
+            LogServiceImpl.getInstance().log(Level.INFO, e.getMessage());
+        } catch (SQLException e) {
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
+        }
+        return Optional.empty();
     }
 }

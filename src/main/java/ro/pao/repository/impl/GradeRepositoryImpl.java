@@ -24,29 +24,12 @@ public class GradeRepositoryImpl implements GradeRepository {
 
     @Override
     public List<Grade> getAllGradesByStudentId(UUID studentId) {
-        String sqlStatement = "SELECT * FROM GRADE WHERE user_id LIKE ?";
+        String sqlStatement = "SELECT * FROM GRADE WHERE user_id = ?";
 
         try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
 
             preparedStatement.setString(1, studentId.toString());
-
-            return gradeMapper.mapToGradeList(preparedStatement.executeQuery());
-        } catch (SQLException e) {
-            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
-        }
-
-        return new ArrayList<>();
-    }
-
-    @Override
-    public List<Grade> getAllGradesByTestId(UUID testId) {
-        String sqlStatement = "SELECT * FROM GRADE WHERE material_id LIKE ?";
-
-        try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
-
-            preparedStatement.setString(1, testId.toString());
 
             return gradeMapper.mapToGradeList(preparedStatement.executeQuery());
         } catch (SQLException e) {
@@ -98,16 +81,15 @@ public class GradeRepositoryImpl implements GradeRepository {
 
     @Override
     public void updateObjectById(UUID id, Grade newObject) {
-        String sqlGradeUpdate = "UPDATE GRADE SET user_id = ?, material_id = ?, grade = ?, weight = ? WHERE grade_id = ?";
+        String sqlGradeUpdate = "UPDATE GRADE SET user_id = ?, grade = ?, weight = ? WHERE grade_id = ?";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
              PreparedStatement gradeUpdateStatement = connection.prepareStatement(sqlGradeUpdate)) {
 
             gradeUpdateStatement.setString(1, newObject.getStudentId().toString()); //set student_id
-            gradeUpdateStatement.setString(2, newObject.getTestId().toString()); //set test_id
-            gradeUpdateStatement.setDouble(3, newObject.getGrade()); //set grade
-            gradeUpdateStatement.setDouble(4, newObject.getWeight()); //set weight
-            gradeUpdateStatement.setString(5, newObject.getGradeId().toString()); //set grade_id
+            gradeUpdateStatement.setDouble(2, newObject.getGrade()); //set grade
+            gradeUpdateStatement.setDouble(3, newObject.getWeight()); //set weight
+            gradeUpdateStatement.setString(4, newObject.getGradeId().toString()); //set grade_id
 
             gradeUpdateStatement.executeUpdate();
 
@@ -120,16 +102,15 @@ public class GradeRepositoryImpl implements GradeRepository {
 
     @Override
     public void addNewObject(Grade newObject) {
-        String sqlGradeInsert = "INSERT INTO GRADE (grade_id, user_id, material_id, grade, weight) VALUES(?, ?, ?, ?, ?)";
+        String sqlGradeInsert = "INSERT INTO GRADE (grade_id, user_id, grade, weight) VALUES(?, ?, ?, ?)";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
              PreparedStatement gradeInsertStatement = connection.prepareStatement(sqlGradeInsert)) {
 
             gradeInsertStatement.setString(1, newObject.getGradeId().toString()); //set grade_id
             gradeInsertStatement.setString(2, newObject.getStudentId().toString()); //set student_id
-            gradeInsertStatement.setString(3, newObject.getTestId().toString()); //set test_id
-            gradeInsertStatement.setDouble(4, newObject.getGrade()); //set grade
-            gradeInsertStatement.setDouble(5, newObject.getWeight()); //set weight
+            gradeInsertStatement.setDouble(3, newObject.getGrade()); //set grade
+            gradeInsertStatement.setDouble(4, newObject.getWeight()); //set weight
 
             gradeInsertStatement.executeUpdate();
 

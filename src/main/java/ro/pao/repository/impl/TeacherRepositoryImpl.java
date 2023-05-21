@@ -6,7 +6,6 @@ import ro.pao.exceptions.ObjectNotFoundException;
 import ro.pao.exceptions.UserNotFoundException;
 import ro.pao.mapper.UserMapper;
 import ro.pao.model.sealed.Teacher;
-import ro.pao.model.enums.Discipline;
 import ro.pao.repository.TeacherRepository;
 import ro.pao.service.impl.LogServiceImpl;
 
@@ -35,6 +34,7 @@ public class TeacherRepositoryImpl implements TeacherRepository {
 
             if (teacher.isEmpty()) {
                 CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.SEVERE, "Error: Select student by id failed!"));
+
                 throw new UserNotFoundException("No teacher found with the id: " + id);
             } else {
                 CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.INFO, "Selected from Teacher!"));
@@ -50,6 +50,7 @@ public class TeacherRepositoryImpl implements TeacherRepository {
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
              PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
+
             preparedStatement.setString(1, id.toString());
 
             preparedStatement.executeUpdate();
@@ -120,7 +121,7 @@ public class TeacherRepositoryImpl implements TeacherRepository {
             teacherInsertStatement.executeUpdate();
 
             connection.commit();
-            CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.SEVERE, "1 teacher inserted!"));
+            CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.INFO, "1 teacher inserted!"));
         } catch (SQLException e) {
             CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.SEVERE, "Error: Insert teacher failed!"));
             LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
@@ -147,23 +148,6 @@ public class TeacherRepositoryImpl implements TeacherRepository {
     @Override
     public void addAllFromGivenList(List<Teacher> objectList) {
         objectList.forEach(this::addNewObject);
-    }
-
-    @Override
-    public List<Discipline> getAllCoursesByTeacherId(UUID teacherId) {
-        String sqlStatement = "SELECT discipline FROM COURSE c LEFT JOIN TEACHER t ON c.user_id = t.user_id WHERE t.user_id = ?";
-
-        try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
-
-            preparedStatement.setString(1, teacherId.toString()); //set user_id
-
-            return userMapper.mapToDisciplineList(preparedStatement.executeQuery());
-        } catch (SQLException e) {
-            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
-        }
-
-        return new ArrayList<>();
     }
 
     @Override
@@ -197,7 +181,7 @@ public class TeacherRepositoryImpl implements TeacherRepository {
             Optional<Teacher> teacher = Optional.ofNullable(userMapper.mapToTeacher(resultSet));
 
             if (teacher.isEmpty()) {
-                CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.INFO, "Error: Select teacher by email failed!"));
+                CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.SEVERE, "Error: Select teacher by email failed!"));
                 throw new UserNotFoundException("No teacher found with the email: " + userEmail);
             } else {
                 CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.INFO, "Selected from teacher!"));

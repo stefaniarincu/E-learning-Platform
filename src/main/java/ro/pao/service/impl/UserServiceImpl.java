@@ -1,10 +1,16 @@
 package ro.pao.service.impl;
 
-import org.postgresql.util.PSQLException;
 import ro.pao.exceptions.UserNotFoundException;
+import ro.pao.model.Document;
+import ro.pao.model.Test;
+import ro.pao.model.Video;
+import ro.pao.model.abstracts.Material;
+import ro.pao.model.sealed.Student;
+import ro.pao.model.sealed.Teacher;
 import ro.pao.model.sealed.User;
 import ro.pao.repository.UserRepository;
 import ro.pao.repository.impl.UserRepositoryImpl;
+import ro.pao.service.StudentService;
 import ro.pao.service.UserService;
 
 import java.sql.SQLException;
@@ -12,59 +18,68 @@ import java.util.*;
 import java.util.logging.Level;
 
 public class UserServiceImpl implements UserService<User> {
-    private final UserRepository<User> userRepository = new UserRepositoryImpl();
+    private final UserService<Teacher> teacherService = new TeacherServiceImpl();
+    private final UserService<Student> studentService = new StudentServiceImpl();
     @Override
     public Optional<User> getById(UUID id) {
-        try {
-            return userRepository.getObjectById(id);
-        } catch (UserNotFoundException e){
-            LogServiceImpl.getInstance().log(Level.WARNING, e.getMessage());
-        } catch (Exception e) {
-            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
-        }
-        return Optional.empty();
+        Optional<? extends User> user = studentService.getById(id);
+        if (user.isPresent())
+            return user.map(u -> (User) u);
+
+        return teacherService.getById(id).map(u -> u);
     }
 
     @Override
     public List<User> getAllItems() {
-        return userRepository.getAll();
+        List<User> userList = new ArrayList<>();
+
+        userList.addAll(studentService.getAllItems());
+        userList.addAll(teacherService.getAllItems());
+
+        return userList;
     }
 
     @Override
     public void addOnlyOne(User newObject) {
-       try {
-           userRepository.addNewObject(newObject);
-       } catch (SQLException e) {
-           LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
-       }
+        if (newObject instanceof Student student) {
+            studentService.addOnlyOne(student);
+        } else {
+            teacherService.addOnlyOne((Teacher) newObject);
+        }
     }
 
     @Override
     public void addMany(List<User> objectList) {
-        try {
-            userRepository.addAllFromGivenList(objectList);
-        } catch (SQLException e) {
-            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
+        for (User user: objectList) {
+            if (user instanceof Student student) {
+                studentService.addOnlyOne(student);
+            } else {
+                teacherService.addOnlyOne((Teacher) user);
+            }
         }
     }
 
     @Override
     public void removeById(UUID id) {
-        userRepository.deleteObjectById(id);
+        studentService.removeById(id);
+        teacherService.removeById(id);
     }
 
     @Override
     public void updateById(UUID id, User newObject) {
-        userRepository.updateObjectById(id, newObject);
+        if (newObject instanceof Student student) {
+            studentService.updateById(id, student);
+        } else {
+            teacherService.updateById(id, (Teacher) newObject);
+        }
     }
 
     @Override
     public Optional<User> getByEmail(String email) {
-        return Optional.empty();
-    }
+        Optional<? extends User> user = studentService.getByEmail(email);
+        if (user.isPresent())
+            return user.map(u -> (User) u);
 
-    @Override
-    public boolean emailExists(User user) {
-        return false;
+        return teacherService.getByEmail(email).map(u -> u);
     }
 }

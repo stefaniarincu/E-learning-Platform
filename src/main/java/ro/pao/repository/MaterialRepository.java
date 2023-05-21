@@ -9,6 +9,6 @@ import java.util.UUID;
 
 public interface MaterialRepository<T extends Material> extends RepositoryGeneric<T> {
     List<T> getAllMaterialsByDiscipline(Discipline discipline);
-    List<T> getAllMaterialsByStudentId(UUID studentId) throws SQLException;
-    List<T> getMaterialByTeacher(UUID teacherId);
+    List<T> getAllMaterialsByStudentId(UUID studentId);
+    List<T> getAllMaterialsByCourseId(UUID courseId);
 }

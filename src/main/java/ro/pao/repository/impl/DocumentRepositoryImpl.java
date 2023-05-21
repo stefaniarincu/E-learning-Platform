@@ -4,7 +4,6 @@ import ro.pao.application.csv.CsvLogger;
 import ro.pao.config.DatabaseConfiguration;
 import ro.pao.exceptions.MaterialNotFoundException;
 import ro.pao.exceptions.ObjectNotFoundException;
-import ro.pao.exceptions.UserNotFoundException;
 import ro.pao.mapper.MaterialMapper;
 import ro.pao.model.Document;
 import ro.pao.model.enums.Discipline;
@@ -149,7 +148,7 @@ public class DocumentRepositoryImpl implements DocumentRepository {
 
     @Override
     public List<Document> getAllMaterialsByStudentId(UUID studentId) {
-        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN COURSE c ON m.course_id = c.course_id WHERE LOWER(m.material_type) LIKE ? AND c.course_id IN (SELECT * FROM ENROLLED WHERE user_id = ?)";
+        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN DOCUMENT d ON m.material_id = d.material_id WHERE LOWER(m.material_type) LIKE ? AND m.material_id IN (SELECT course_id FROM ENROLLED WHERE user_id = ?)";
 
         try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
@@ -167,7 +166,7 @@ public class DocumentRepositoryImpl implements DocumentRepository {
 
     @Override
     public List<Document> getAllMaterialsByDiscipline(Discipline discipline) {
-        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN COURSE c ON m.course_id = c.course_id WHERE LOWER(m.material_type) LIKE ? AND LOWER(c.discipline) LIKE ?";
+        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN DOCUMENT d ON m.material_id = d.material_id WHERE LOWER(m.material_type) LIKE ? AND m.course_id IN (SELECT course_id FROM COURSE WHERE LOWER(c.discipline) LIKE ?)";
 
         try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
@@ -184,14 +183,12 @@ public class DocumentRepositoryImpl implements DocumentRepository {
     }
 
     @Override
-    public List<Document> getMaterialByTeacher(UUID teacherId) {
-        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN COURSE c ON m.course_id = c.course_id WHERE LOWER(m.material_type) LIKE ? AND c.user_id LIKE ?";
-
+    public List<Document> getAllDocumentsByType(DocumentType documentType) {
+        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN DOCUMENT d on m.material_id = d.material_id WHERE LOWER(d.document_type) LIKE ?";
         try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
 
-            preparedStatement.setString(1, "document"); //set material_type
-            preparedStatement.setString(2, teacherId.toString()); //set user_id
+            preparedStatement.setString(1, documentType.getTypeString());
 
             return materialMapper.mapToDocumentList(preparedStatement.executeQuery());
         } catch (SQLException e) {
@@ -202,12 +199,14 @@ public class DocumentRepositoryImpl implements DocumentRepository {
     }
 
     @Override
-    public List<Document> getAllDocumentsByType(DocumentType documentType) {
-        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN DOCUMENT d on m.material_id = d.material_id WHERE LOWER(d.document_type) LIKE ?";
+    public List<Document> getAllMaterialsByCourseId(UUID courseId) {
+        String sqlStatement = "SELECT * FROM MATERIAL m LEFT JOIN DOCUMENT d ON m.material_id = d.material_id WHERE m.course_id = ? AND LOWER(m.material_type) LIKE ?";
+
         try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
 
-            preparedStatement.setString(1, documentType.getTypeString());
+            preparedStatement.setString(1, courseId.toString());
+            preparedStatement.setString(2, "document");
 
             return materialMapper.mapToDocumentList(preparedStatement.executeQuery());
         } catch (SQLException e) {

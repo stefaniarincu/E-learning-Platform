@@ -6,7 +6,6 @@ import lombok.ToString;
 
 import java.util.Arrays;
 
-@ToString
 @Getter
 @AllArgsConstructor
 public enum TestType {
@@ -18,7 +17,7 @@ public enum TestType {
 
     public static TestType getEnumByFieldString(String field) {
         return Arrays.stream(TestType.values())
-                .filter(enumElement -> enumElement.typeString.equals(field))
+                .filter(enumElement -> enumElement.typeString.equalsIgnoreCase(field))
                 .findAny()
                 .orElse(NONE);
     }

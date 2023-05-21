@@ -65,13 +65,9 @@ public class StudentRepositoryImpl implements StudentRepository {
     @Override
     public void updateObjectById(UUID id, Student newObject) {
         String sqlUserUpdate = "UPDATE _USER SET first_name = ?, last_name = ?, email = ?, password = ? WHERE user_id = ?";
-        String sqlStudentUpdate = "SELECT * FROM STUDENT WHERE 1>2";//UPDATE STUDENT SET document_type = ? WHERE material_id = ?";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
-             PreparedStatement userUpdateStatement = connection.prepareStatement(sqlUserUpdate);
-             PreparedStatement studentUpdateStatement = connection.prepareStatement(sqlStudentUpdate)) {
-
-            connection.setAutoCommit(false);
+             PreparedStatement userUpdateStatement = connection.prepareStatement(sqlUserUpdate)) {
 
             userUpdateStatement.setString(1, newObject.getFirstName()); //set first_name
             userUpdateStatement.setString(2, newObject.getLastName()); //set last_name
@@ -81,14 +77,6 @@ public class StudentRepositoryImpl implements StudentRepository {
 
             userUpdateStatement.executeUpdate();
 
-            /* TO DO
-            studentUpdateStatement.setString(2, id.toString()); //set user_id
-            */
-
-            studentUpdateStatement.executeUpdate();
-
-            connection.commit();
-
             CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.INFO, "Student updated!"));
         } catch (SQLException e) {
             CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.SEVERE, "Error: Update student failed!"));
@@ -97,11 +85,32 @@ public class StudentRepositoryImpl implements StudentRepository {
     }
 
     @Override
-    public void addNewObject(Student newObject) {
-        String sqlUserInsert = "INSERT INTO _USER (user_id, first_name, last_name, email, password, user_type) VALUES(?, ?, ?, ?, ?, ?)";
+    public void updateStudentAverageGrade(UUID studentId, Double averageGrade) {
+        String sqlStudentUpdate = "UPDATE STUDENT SET average_grade = ? WHERE user_id = ?";
 
         try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
-             PreparedStatement userInsertStatement = connection.prepareStatement(sqlUserInsert)) {
+             PreparedStatement studentUpdateStatement = connection.prepareStatement(sqlStudentUpdate)) {
+
+            studentUpdateStatement.setDouble(1, averageGrade); //set average_grade
+            studentUpdateStatement.setString(2, studentId.toString()); //set user_id
+
+            studentUpdateStatement.executeUpdate();
+
+            CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.INFO, "Student average grade updated!"));
+        } catch (SQLException e) {
+            CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.SEVERE, "Error: Update average grade for student failed!"));
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
+        }
+    }
+
+    @Override
+    public void addNewObject(Student newObject) {
+        String sqlUserInsert = "INSERT INTO _USER (user_id, first_name, last_name, email, password, user_type) VALUES(?, ?, ?, ?, ?, ?)";
+        String sqlStudentInsert = "INSERT INTO STUDENT (user_id, average_grade) VALUES (?, ?)";
+
+        try (Connection connection = DatabaseConfiguration.getDatabaseConnection();
+             PreparedStatement userInsertStatement = connection.prepareStatement(sqlUserInsert);
+             PreparedStatement studentInsertStatement = connection.prepareStatement(sqlStudentInsert)) {
 
             connection.setAutoCommit(false);
 
@@ -113,6 +122,11 @@ public class StudentRepositoryImpl implements StudentRepository {
             userInsertStatement.setString(6, "Student"); //set user_type
 
             userInsertStatement.executeUpdate();
+
+            studentInsertStatement.setString(1, newObject.getId().toString()); //set user_id
+            studentInsertStatement.setDouble(2, 0.0); //set average_grade
+
+            studentInsertStatement.executeUpdate();
 
             connection.commit();
 
@@ -165,8 +179,39 @@ public class StudentRepositoryImpl implements StudentRepository {
     }
 
     @Override
-    public List<Student> getAllStudentByAvgGrade(Double averageGrade) {
-        return null;
+    public List<Student> getAllStudentsWithHigherAvgGrade(Double averageGrade) {
+        String sqlStatement = "SELECT * FROM _USER u LEFT JOIN STUDENT s on u.user_id = s.user_id WHERE LOWER(u.user_type) LIKE ? AND s.average_grade >= ?";
+
+        try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
+
+            preparedStatement.setString(1, "student");
+            preparedStatement.setDouble(2, averageGrade);
+
+            return userMapper.mapToStudentList(preparedStatement.executeQuery());
+        } catch (SQLException e) {
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
+        }
+
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<Student> getAllStudentsWithLowerAvgGrade(Double averageGrade) {
+        String sqlStatement = "SELECT * FROM _USER u LEFT JOIN STUDENT s on u.user_id = s.user_id WHERE LOWER(u.user_type) LIKE ? AND s.average_grade <= ?";
+
+        try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
+
+            preparedStatement.setString(1, "student");
+            preparedStatement.setDouble(2, averageGrade);
+
+            return userMapper.mapToStudentList(preparedStatement.executeQuery());
+        } catch (SQLException e) {
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
+        }
+
+        return new ArrayList<>();
     }
 
     @Override
@@ -182,7 +227,7 @@ public class StudentRepositoryImpl implements StudentRepository {
             Optional<Student> student = Optional.ofNullable(userMapper.mapToStudent(resultSet));
 
             if (student.isEmpty()) {
-                CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.INFO, "Error: Select student by email failed!"));
+                CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.SEVERE, "Error: Select student by email failed!"));
                 throw new UserNotFoundException("No student found with the email: " + userEmail);
             } else {
                 CsvLogger.getInstance().logAction(LogServiceImpl.getInstance().logIntoCsv(Level.INFO, "Selected from student!"));
@@ -190,5 +235,23 @@ public class StudentRepositoryImpl implements StudentRepository {
 
             return student;
         }
+    }
+
+    @Override
+    public List<Student> getAllStudentsByCourseId(UUID courseId) {
+        String sqlStatement = "SELECT * FROM _USER u LEFT JOIN STUDENT s ON s.user_id = u.user_id WHERE LOWER(u.user_type) LIKE ? AND s.user_id IN (SELECT user_id FROM ENROLLED WHERE course_id = ?)";
+
+        try(Connection connection = DatabaseConfiguration.getDatabaseConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
+
+            preparedStatement.setString(1, "student");
+            preparedStatement.setString(2, courseId.toString());
+
+            return userMapper.mapToStudentList(preparedStatement.executeQuery());
+        } catch (SQLException e) {
+            LogServiceImpl.getInstance().log(Level.SEVERE, e.getMessage());
+        }
+
+        return new ArrayList<>();
     }
 }
