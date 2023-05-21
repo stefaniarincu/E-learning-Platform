@@ -14,6 +14,8 @@ public class Main {
 
         menu.demoOnInsertingGrades();
 
+        menu.demoOnInsertingMaterials();
+
         menu.demoOnEnrollingStudents();
 
         menu.demoOnIterator();
