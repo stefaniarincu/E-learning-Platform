@@ -22,7 +22,7 @@ public class LogServiceImpl implements LogService {
 
     @Override
     public LoggerRecord logIntoCsv(Level level, String message) {
-        return new LoggerRecord(level, logger.getName(), message, LocalDateTime.now());
+        return new LoggerRecord(level, message, LocalDateTime.now());
     }
 }
 

@@ -26,7 +26,7 @@ public class CsvLogger {
     private static final DateTimeFormatter TIMESTAMP_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public String[] format(LoggerRecord record) {
-        return new String[] {TIMESTAMP_FORMATTER.format(record.dateTime()), record.level().toString(), record.name(), record.message()};
+        return new String[] {TIMESTAMP_FORMATTER.format(record.dateTime()), record.level().toString(), record.message()};
     }
 
     public void logAction(LoggerRecord record){
