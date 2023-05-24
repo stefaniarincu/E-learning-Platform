@@ -2,32 +2,30 @@ package ro.pao;
 
 import ro.pao.application.Menu;
 
-import java.util.Scanner;
-
 public class Main {
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        Menu menu = Menu.getInstance();
 
-        while (true) {
-            Menu menu = Menu.getInstance();
+        menu.demoOnGateway();
 
-            menu.demoOnDocument();
+        menu.demoOnInsertingUsers();
 
-            menu.demoOnVideo();
+        menu.demoOnInsertingCourses();
 
-            menu.demoOnTest();
+        menu.demoOnInsertingGrades();
 
-            menu.demoOnAllMaterials();
+        menu.demoOnInsertingMaterials();
 
-            menu.demoOnStudents();
+        menu.demoOnEnrollingStudents();
 
-            menu.demoOnTeachers();
+        menu.demoOnIterator();
 
-            menu.demoOnAllUsers();
+        menu.demoOnStrategyDesignPattern();
 
-            if ("exit".equals(scanner.next())) {
-                break;
-            }
-        }
+        menu.demoOnThreads();
+
+        menu.demoOnLoggingErrors();
+
+        menu.demo();
     }
 }
