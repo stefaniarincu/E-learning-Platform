@@ -158,7 +158,7 @@ public class TeacherRepositoryImpl implements TeacherRepository {
             PreparedStatement preparedStatement = connection.prepareStatement(sqlStatement)) {
 
             preparedStatement.setString(1, "teacher"); //set user_type
-            preparedStatement.setString(2, degree); //set degree
+            preparedStatement.setString(2, degree.toLowerCase()); //set degree
 
             return userMapper.mapToTeacherList(preparedStatement.executeQuery());
         } catch (SQLException e) {

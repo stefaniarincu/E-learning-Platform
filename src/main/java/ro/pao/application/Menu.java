@@ -53,9 +53,9 @@ public class Menu {
 
         Teacher teacher = Teacher.builder()
                 .id(UUID.randomUUID())
-                .firstName("Andrei")
-                .lastName("Matei")
-                .email("andrei.matei@gmail")
+                .firstName("Andreei")
+                .lastName("Mateei")
+                .email("andrei.mateei@gmail")
                 .password("vreaParola!")
                 .degree("masterand")
                 .build();
@@ -64,17 +64,17 @@ public class Menu {
 
         List<Teacher> teachers = List.of(Teacher.builder()
                         .id(UUID.randomUUID())
-                        .firstName("Elena")
-                        .lastName("Atanasiu")
-                        .email("ella.gmail@gmail")
+                        .firstName("Eleena")
+                        .lastName("Ataanasiu")
+                        .email("ellaa.gmail@gmail")
                         .password("PpaarraRoLa")
                         .degree("lector")
                         .build(),
                 Teacher.builder()
                         .id(UUID.randomUUID())
-                        .firstName("Alin")
-                        .lastName("Mariana")
-                        .email("alinsaumariana@gmail")
+                        .firstName("Aliin")
+                        .lastName("Mariiana")
+                        .email("aliinsaumariana@gmail")
                         .password("cumTeCheamaWai?")
                         .degree("lector")
                         .build());
@@ -83,9 +83,9 @@ public class Menu {
 
         Student student = Student.builder()
                 .id(UUID.randomUUID())
-                .firstName("Ioan")
-                .lastName("Numedefamilie")
-                .email("ion.numedefamili@gmail")
+                .firstName("Ioaan")
+                .lastName("Numedefamiliie")
+                .email("ion.numeadefamili@gmail")
                 .password("WhiedffweeejaW")
                 .build();
 
@@ -93,23 +93,23 @@ public class Menu {
 
         List<Student> students = List.of(Student.builder()
                         .id(UUID.randomUUID())
-                        .firstName("Teodora")
-                        .lastName("Teodorescu")
-                        .email("teo.teo@gmail")
+                        .firstName("Teeodora")
+                        .lastName("Teeodorescu")
+                        .email("teo.teeo@gmail")
                         .password("PdfsarollllaLa")
                         .build(),
                 Student.builder()
                         .id(UUID.randomUUID())
-                        .firstName("Marian")
-                        .lastName("Viteza")
-                        .email("marian.02@gmail")
+                        .firstName("Maarian")
+                        .lastName("Viiteza")
+                        .email("maarian.02@gmail")
                         .password("1AAAAdfAAParoLA")
                         .build(),
                 Student.builder()
                         .id(UUID.randomUUID())
-                        .firstName("Miruna")
-                        .lastName("Miru")
-                        .email("mm@gmail")
+                        .firstName("Miiruna")
+                        .lastName("Miiru")
+                        .email("mma@gmail")
                         .password("1PUnCevaSiNUdaBine")
                         .build());
         studentService.addMany(students);
@@ -123,28 +123,28 @@ public class Menu {
         Grade grade = Grade.builder()
                 .gradeId(UUID.randomUUID())
                 .studentId(studentList.get(random.nextInt(studentList.size())).getId())
-                .grade(9.7)
+                .grade(5.7)
                 .weight(0.5)
                 .build();
         gradeService.addOnlyOne(grade);
         grade = Grade.builder()
                 .gradeId(UUID.randomUUID())
                 .studentId(studentList.get(random.nextInt(studentList.size())).getId())
-                .grade(7.44)
-                .weight(0.6)
+                .grade(6.44)
+                .weight(0.4)
                 .build();
         gradeService.addOnlyOne(grade);
 
         List<Grade> gradeList = List.of(Grade.builder()
                         .gradeId(UUID.randomUUID())
                         .studentId(studentList.get(random.nextInt(studentList.size())).getId())
-                        .grade(10.00)
-                        .weight(0.9)
+                        .grade(3.00)
+                        .weight(0.1)
                         .build(),
                 Grade.builder()
                         .gradeId(UUID.randomUUID())
                         .studentId(studentList.get(random.nextInt(studentList.size())).getId())
-                        .grade(9.88)
+                        .grade(5.88)
                         .weight(0.1)
                         .build(),
                 Grade.builder()
@@ -180,7 +180,7 @@ public class Menu {
 
         Course course = Course.builder()
                 .courseId(UUID.randomUUID())
-                .title("Chimie organica")
+                .title("Chimie anorganica")
                 .discipline(Discipline.CHEMISTRY)
                 .teacherId(teacherList.get(random.nextInt(teacherList.size())).getId())
                 .build();
@@ -189,13 +189,13 @@ public class Menu {
 
         List<Course> courseList = List.of(Course.builder()
                 .courseId(UUID.randomUUID())
-                .title("Desen tehnic")
+                .title("Desen grafic")
                 .discipline(Discipline.MATHEMATICS)
                 .teacherId(teacherList.get(random.nextInt(teacherList.size())).getId())
                 .build(),
                 Course.builder()
                         .courseId(UUID.randomUUID())
-                        .title("Quantum physics")
+                        .title("Mecanica")
                         .discipline(Discipline.PHYSICS)
                         .teacherId(teacherList.get(random.nextInt(teacherList.size())).getId())
                         .build());
@@ -226,8 +226,8 @@ public class Menu {
         Document document = Document.builder()
                 .id(UUID.randomUUID())
                 .creationTime(LocalDateTime.now().minus(31, ChronoUnit.DAYS))
-                .title("Theory of nothing")
-                .description("In this material you will learn nothing useful.")
+                .title("Theory of something")
+                .description("In this material you will learn something useful.")
                 .courseId(courseList.get(random.nextInt(courseList.size())).getCourseId())
                 .documentType(DocumentType.COURSE)
                 .build();
@@ -238,7 +238,7 @@ public class Menu {
         List<Document> documentList = List.of(Document.builder()
                                 .id(UUID.randomUUID())
                                 .creationTime(LocalDateTime.now().minus(1, ChronoUnit.MONTHS))
-                                .title("Fractal numbers")
+                                .title("Fractal numbers 2")
                                 .description("In this material you will find some exercises that you have to solve using recursion.")
                                 .courseId(courseList.get(random.nextInt(courseList.size())).getCourseId())
                                 .documentType(DocumentType.PRACTICE)
@@ -246,7 +246,7 @@ public class Menu {
                         Document.builder()
                                 .id(UUID.randomUUID())
                                 .creationTime(LocalDateTime.now().minus(891263, ChronoUnit.MINUTES))
-                                .title("Drawing shadows")
+                                .title("Drawing shadows Part2")
                                 .description("In this material you will learn how to draw shadows.")
                                 .courseId(courseList.get(random.nextInt(courseList.size())).getCourseId())
                                 .documentType(DocumentType.IMPLEMENTATION)
@@ -257,7 +257,7 @@ public class Menu {
         Video video = Video.builder()
                 .id(UUID.randomUUID())
                 .creationTime(LocalDateTime.now().minus(1, ChronoUnit.YEARS))
-                .title("Visualization of something")
+                .title("Visualization of something new")
                 .description("This is a video where you can find a short video I think.")
                 .courseId(courseList.get(random.nextInt(courseList.size())).getCourseId())
                 .duration(LocalTime.parse("00:05:05", DateTimeFormatter.ISO_TIME))
@@ -269,7 +269,7 @@ public class Menu {
        List<Video> videoList = List.of(Video.builder()
                                 .id(UUID.randomUUID())
                                 .creationTime(LocalDateTime.now().minus(121, ChronoUnit.HOURS))
-                                .title("How to catch your shadow")
+                                .title("How to catch your shadow Part2")
                                 .description("In this video you will find absolutely nothing.")
                                 .courseId(courseList.get(random.nextInt(courseList.size())).getCourseId())
                                 .duration(LocalTime.parse("01:22:12", DateTimeFormatter.ISO_TIME))
@@ -277,7 +277,7 @@ public class Menu {
                         Video.builder()
                                 .id(UUID.randomUUID())
                                 .creationTime(LocalDateTime.now())
-                                .title("The cat in the box")
+                                .title("The cat in the boxes")
                                 .description("In this video you will see something amazing.")
                                 .courseId(courseList.get(random.nextInt(courseList.size())).getCourseId())
                                 .duration(LocalTime.parse("00:14:59", DateTimeFormatter.ISO_TIME))
@@ -288,7 +288,7 @@ public class Menu {
         Test test = Test.builder()
                 .id(UUID.randomUUID())
                 .creationTime(LocalDateTime.now().minus(12312, ChronoUnit.HALF_DAYS))
-                .title("Complex numbers")
+                .title("Complex numbers Exam")
                 .description("Here is a test that contains exercises with complex numbers.")
                 .courseId(courseList.get(random.nextInt(courseList.size())).getCourseId())
                 .testType(TestType.EXAM)
@@ -299,7 +299,7 @@ public class Menu {
         List<Test> testList = List.of(Test.builder()
                                 .id(UUID.randomUUID())
                                 .creationTime(LocalDateTime.now().minus(66, ChronoUnit.DAYS))
-                                .title("Recursion")
+                                .title("Recursion Quiz")
                                 .description("Here is a funny and simple quiz about past recursion.")
                                 .courseId(courseList.get(random.nextInt(courseList.size())).getCourseId())
                                 .testType(TestType.QUIZ)
@@ -307,7 +307,7 @@ public class Menu {
                         Test.builder()
                                 .id(UUID.randomUUID())
                                 .creationTime(LocalDateTime.now())
-                                .title("ML")
+                                .title("ML KR")
                                 .description("This test aims to verify If you can have a negative score.")
                                 .courseId(courseList.get(random.nextInt(courseList.size())).getCourseId())
                                 .testType(TestType.EXAM)
@@ -378,9 +378,9 @@ public class Menu {
 
         Teacher teacher = Teacher.builder()
                 .id(UUID.randomUUID())
-                .firstName("Ionel")
-                .lastName("Ionescu")
-                .email("ionel.ionescuuu@gmail")
+                .firstName("Ioneel")
+                .lastName("Ioneescu")
+                .email("ioneel.ionescuuu@gmail")
                 .password("TesteazaLoggerul")
                 .degree("masterand")
                 .build();
@@ -400,8 +400,8 @@ public class Menu {
 
         Student student = Student.builder()
                 .id(UUID.randomUUID())
-                .firstName("Mariana")
-                .lastName("MariaairaM")
+                .firstName("Mariaana")
+                .lastName("MariaaairaM")
                 .email("mariiana@gmail")
                 .password("pal")
                 .build();
@@ -411,7 +411,7 @@ public class Menu {
     public void demo() {
         System.out.println("\n\n-----Demo on the joins and usage of database-----");
 
-        List<Course> courseList = courseService.getCoursesByTeacherId(UUID.fromString("c90af071-ffb4-474b-b3f3-28ac4f85df93"));
+        List<Course> courseList = courseService.getCoursesByTeacherId(UUID.fromString("ec653158-5fba-4f08-beef-fff7e82e8aef"));
 
         courseList.forEach(System.out::println);
     }
